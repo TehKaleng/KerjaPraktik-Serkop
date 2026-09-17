@@ -9,9 +9,6 @@ use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         // 1. Buat role
@@ -23,12 +20,12 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@serenatakopi.id'],
             [
                 'name'     => 'Admin Serenata',
-                'password' => Hash::make('password123'), // GANTI setelah login pertama!
+                'password' => Hash::make('password123'),
             ]
         );
         $admin->assignRole($adminRole);
 
-        // 3. (Opsional) Buat 1 akun user contoh buat testing
+        // 3. Buat 1 akun user contoh
         $user = User::firstOrCreate(
             ['email' => 'user@serenatakopi.id'],
             [
@@ -37,5 +34,8 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $user->assignRole($userRole);
+
+        // 4. Isi data contoh: menu, testimoni, kontak
+        $this->call(MenuSeeder::class);
     }
 }

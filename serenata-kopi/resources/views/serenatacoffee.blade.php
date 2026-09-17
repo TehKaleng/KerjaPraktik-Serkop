@@ -45,7 +45,7 @@
 
 <section id="tentang" class="about">
   <div class="wrap about-inner">
-    <div class="about-figure"><span>Sejak 2019</span></div>
+    <div class="about-figure"><span>Sejak 2021</span></div>
     <div>
       <div class="section-tag">TENTANG KAMI</div>
       <h2>Dibangun dari kecintaan pada kopi dan ruang berkumpul</h2>
@@ -155,10 +155,10 @@
     </div>
     <div class="contact">
       <div>
-        <div class="info-row"><div class="k">Alamat</div><div class="v">Jl. Melati No. 12, Palembang, Sumatera Selatan</div></div>
-        <div class="info-row"><div class="k">Jam Buka</div><div class="v">Senin–Minggu, 08.00–22.00</div></div>
-        <div class="info-row"><div class="k">Telepon</div><div class="v">(0711) 000-0000</div></div>
-        <div class="info-row"><div class="k">Email</div><div class="v">hello@serenatakopi.id</div></div>
+        <div class="info-row"><div class="k">Alamat</div><div class="v">Jl. Jend. Sudirman No.609, 18 Ilir, Kec. Ilir Tim. I, Kota Palembang, Sumatera Selatan 30121 Palembang</div></div>
+        <div class="info-row"><div class="k">Jam Buka</div><div class="v">Senin–Minggu, 08.00–23.00</div></div>
+        <div class="info-row"><div class="k">Telepon</div><div class="v">(62+) 853-5360-7734</div></div>
+        <div class="info-row"><div class="k">Email</div><div class="v">serenatakopiandspace@gmail.com</div></div>
       </div>
       <div class="map-block">Peta Lokasi<br>(placeholder — bisa diganti embed Google Maps)</div>
     </div>

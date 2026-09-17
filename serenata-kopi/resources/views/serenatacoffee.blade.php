@@ -84,26 +84,18 @@
       <p>Dari kopi klasik hingga kreasi khas rumah, dibuat dengan bahan segar setiap hari.</p>
     </div>
   </div>
-  <div class="menu-grid">
+ <div class="menu-grid">
+  @forelse($menus as $menu)
     <div class="menu-card">
-      <div class="tag">KOPI</div>
-      <h3>Serenata Signature</h3>
-      <p>Espresso, susu oat, sirup gula aren — manis lembut, pahit yang pas.</p>
-      <div class="price">Rp 28.000</div>
+      <div class="tag">{{ strtoupper($menu->kategori) }}</div>
+      <h3>{{ $menu->nama }}</h3>
+      <p>{{ $menu->deskripsi }}</p>
+      <div class="price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</div>
     </div>
-    <div class="menu-card">
-      <div class="tag">NON-KOPI</div>
-      <h3>Matcha Latte</h3>
-      <p>Matcha grade ceremonial dengan susu segar pilihan.</p>
-      <div class="price">Rp 26.000</div>
-    </div>
-    <div class="menu-card">
-      <div class="tag">KUDAPAN</div>
-      <h3>Butter Croissant</h3>
-      <p>Dipanggang setiap pagi, renyah di luar, lembut di dalam.</p>
-      <div class="price">Rp 22.000</div>
-    </div>
-  </div>
+  @empty
+    <div class="menu-card"><p>Menu segera hadir.</p></div>
+  @endforelse
+</div>
 </section>
 
 <section id="suasana">
@@ -160,7 +152,7 @@
         <div class="info-row"><div class="k">Telepon</div><div class="v">(62+) 853-5360-7734</div></div>
         <div class="info-row"><div class="k">Email</div><div class="v">serenatakopiandspace@gmail.com</div></div>
       </div>
-      <div class="map-block">Peta Lokasi<br>(placeholder — bisa diganti embed Google Maps)</div>
+      <div class="map-block" style="padding:0;overflow:hidden;"> @if($kontak->maps_embed) <iframe src="{{ $kontak->maps_embed }}" width="100%" height="100%" style="border:0;min-height:280px;" allowfullscreen loading="lazy"></iframe> @else Peta lokasi belum diatur.<br>Atur di halaman admin. @endif </div>
     </div>
   </div>
 </section>

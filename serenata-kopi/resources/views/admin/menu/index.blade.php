@@ -56,13 +56,23 @@
           ['nama' => 'Butter Croissant', 'kategori' => 'Kudapan', 'harga' => 22000],
       ]) as $menu)
         <tr>
-          <td><div class="thumb"></div></td>
+          <td>
+            @if(!empty($menu['foto']))
+              <img src="{{ asset('storage/' . $menu['foto']) }}" class="thumb" alt="{{ $menu['nama'] }}">
+            @else
+              <div class="thumb"></div>
+            @endif
+          </td>
           <td>{{ $menu['nama'] }}</td>
           <td>{{ $menu['kategori'] }}</td>
           <td>Rp {{ number_format($menu['harga'], 0, ',', '.') }}</td>
           <td class="table-actions">
-            <button class="btn btn-outline btn-sm">Edit</button>
-            <button class="btn btn-danger-ghost btn-sm">Hapus</button>
+            <a href="{{ route('admin.menu.edit', $menu['id']) }}" class="btn btn-outline btn-sm">Edit</a>
+            <form method="POST" action="{{ route('admin.menu.destroy', $menu['id']) }}" onsubmit="return confirm('Yakin hapus menu ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger-ghost btn-sm">Hapus</button>
+            </form>
           </td>
         </tr>
       @empty

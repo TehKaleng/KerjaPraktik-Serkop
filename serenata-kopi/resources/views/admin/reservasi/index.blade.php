@@ -29,7 +29,11 @@
             @endif
           </td>
           <td class="table-actions">
-            <button class="btn btn-outline btn-sm">Konfirmasi</button>
+            <form method="POST" action="{{ route('admin.reservasi.confirm', $r['id']) }}">
+                @csrf
+                @method('PUT')
+                <button type="submit" class="btn btn-outline btn-sm">Konfirmasi</button>
+            </form>
           </td>
         </tr>
       @empty

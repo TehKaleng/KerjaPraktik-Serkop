@@ -1,36 +1,50 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@yield('title', 'Serenata Kopi & Space')</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand"><img src="{{ asset('images/SerenataLogoHeader.png') }}" alt="Serenata Kopi & Space"></div>
+      <div class="nav-links">
+        <a href="{{ route('home') }}#tentang">Tentang</a>
+        <a href="{{ route('home') }}#menu">Menu</a>
+        <a href="{{ route('home') }}#suasana">Suasana</a>
+        <a href="{{ route('home') }}#testimoni">Testimoni</a>
+        <a href="{{ route('home') }}#kontak">Kontak</a>
+      </div>
+      <a href="{{ route('reservasi.form') }}" class="nav-btn">Reservasi</a>
+    </nav>
+  </div>
+</header>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+@yield('content')
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <img src="{{ asset('images/SerenataLogoHeader.png') }}" alt="Serenata Kopi & Space">
+      <div class="footer-links">
+        <a href="{{ route('home') }}#tentang">Tentang</a>
+        <a href="{{ route('home') }}#menu">Menu</a>
+        <a href="{{ route('home') }}#suasana">Suasana</a>
+        <a href="{{ route('home') }}#kontak">Kontak</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Serenata Kopi & Space. Seluruh hak cipta dilindungi.</span>
+      <span>Dibuat sebagai gambaran Company Profile — Kerja Praktik</span>
+    </div>
+  </div>
+</footer>
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
-    </body>
+</body>
 </html>

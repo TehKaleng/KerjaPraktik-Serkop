@@ -20,9 +20,6 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/reservasi', [ReservationController::class, 'create'])->name('reservasi.form');
-Route::post('/reservasi', [ReservationController::class, 'store'])->name('reservasi.store');
-
 /*
 |--------------------------------------------------------------------------
 | HALAMAN USER (harus login)
@@ -36,6 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/reservasi', [ReservationController::class, 'create'])->name('reservasi.form');
+    Route::get('/reservasi/meja-tersedia', [ReservationController::class, 'mejaTersedia'])->name('reservasi.meja-tersedia');
+    Route::post('/reservasi', [ReservationController::class, 'store'])->name('reservasi.store');
+    Route::get('/reservasi/{reservation}/konfirmasi', [ReservationController::class, 'konfirmasi'])->name('reservasi.konfirmasi');
+    Route::post('/reservasi/{reservation}/selesai', [ReservationController::class, 'selesai'])->name('reservasi.selesai');
 });
 
 /*
@@ -67,6 +70,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/reservasi', [AdminReservationController::class, 'index'])->name('reservasi.index');
     Route::put('/reservasi/{reservasi}/confirm', [AdminReservationController::class, 'confirm'])->name('reservasi.confirm');
+    
 });
 
 require __DIR__.'/auth.php';

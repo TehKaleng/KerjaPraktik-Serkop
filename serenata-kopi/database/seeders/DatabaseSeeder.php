@@ -37,5 +37,6 @@ class DatabaseSeeder extends Seeder
 
         // 4. Isi data contoh: menu, testimoni, kontak
         $this->call(MenuSeeder::class);
+        $this->call(MejaSeeder::class);
     }
 }

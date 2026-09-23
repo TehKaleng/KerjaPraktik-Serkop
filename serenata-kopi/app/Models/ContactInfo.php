@@ -17,12 +17,9 @@ class ContactInfo extends Model
         'email',
         'maps_embed',
         'maps_link',
+        'qris_image',
     ];
 
-    /**
-     * Karena tabel ini cuma 1 baris, helper ini ambil (atau bikin default)
-     * baris itu tanpa perlu tau ID-nya.
-     */
     public static function current(): self
     {
         return static::firstOrCreate([], [

@@ -21,7 +21,7 @@
         <a href="#testimoni">Testimoni</a>
         <a href="#kontak">Kontak</a>
       </div>
-      <a href="#kontak" class="nav-btn">Reservasi</a>
+      <a href="{{ route('reservasi.form') }}" class="nav-btn">Reservasi</a>
     </nav>
   </div>
 </header>
@@ -84,18 +84,18 @@
       <p>Dari kopi klasik hingga kreasi khas rumah, dibuat dengan bahan segar setiap hari.</p>
     </div>
   </div>
- <div class="menu-grid">
-  @forelse($menus as $menu)
-    <div class="menu-card">
-      <div class="tag">{{ strtoupper($menu->kategori) }}</div>
-      <h3>{{ $menu->nama }}</h3>
-      <p>{{ $menu->deskripsi }}</p>
-      <div class="price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</div>
-    </div>
-  @empty
-    <div class="menu-card"><p>Menu segera hadir.</p></div>
-  @endforelse
-</div>
+  <div class="menu-grid">
+    @forelse($menus as $menu)
+      <div class="menu-card">
+        <div class="tag">{{ strtoupper($menu->kategori) }}</div>
+        <h3>{{ $menu->nama }}</h3>
+        <p>{{ $menu->deskripsi }}</p>
+        <div class="price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</div>
+      </div>
+    @empty
+      <div class="menu-card"><p>Menu segera hadir.</p></div>
+    @endforelse
+  </div>
 </section>
 
 <section id="suasana">
@@ -105,10 +105,13 @@
       <h2>Sudut-sudut favorit di Serenata</h2>
     </div>
     <div class="ambience-grid">
-      <div class="b1"></div>
-      <div class="b2"></div>
-      <div class="b3"></div>
-      <div class="b4"></div>
+      @forelse($fotos as $i => $foto)
+        <div class="{{ $i === 0 ? 'b1' : 'b' . ($i + 1) }}"
+             style="background-image:url('{{ asset('storage/' . $foto->foto) }}');background-size:cover;background-position:center;">
+        </div>
+      @empty
+        <div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="b4"></div>
+      @endforelse
     </div>
   </div>
 </section>
@@ -120,21 +123,15 @@
       <h2>Kata mereka yang sudah mampir</h2>
     </div>
     <div class="testi-grid">
-      <div class="testi-card">
-        <p>"Tempat favorit buat kerja remote, wifi kencang dan kopinya konsisten enak."</p>
-        <div class="testi-name">Rani A.</div>
-        <div class="testi-role">Freelancer</div>
-      </div>
-      <div class="testi-card">
-        <p>"Suasananya tenang banget, cocok buat meeting santai sama klien."</p>
-        <div class="testi-name">Fajar S.</div>
-        <div class="testi-role">Pemilik Usaha</div>
-      </div>
-      <div class="testi-card">
-        <p>"Croissant-nya juara, staff-nya ramah dan selalu inget pesanan langgananku."</p>
-        <div class="testi-name">Dinda P.</div>
-        <div class="testi-role">Mahasiswa</div>
-      </div>
+      @forelse($testimonis as $t)
+        <div class="testi-card">
+          <p>"{{ $t->isi }}"</p>
+          <div class="testi-name">{{ $t->nama }}</div>
+          <div class="testi-role">{{ $t->peran }}</div>
+        </div>
+      @empty
+        <div class="testi-card"><p>Belum ada testimoni.</p></div>
+      @endforelse
     </div>
   </div>
 </section>
@@ -147,12 +144,30 @@
     </div>
     <div class="contact">
       <div>
-        <div class="info-row"><div class="k">Alamat</div><div class="v">Jl. Jend. Sudirman No.609, 18 Ilir, Kec. Ilir Tim. I, Kota Palembang, Sumatera Selatan 30121 Palembang</div></div>
-        <div class="info-row"><div class="k">Jam Buka</div><div class="v">Senin–Minggu, 08.00–23.00</div></div>
-        <div class="info-row"><div class="k">Telepon</div><div class="v">(62+) 853-5360-7734</div></div>
-        <div class="info-row"><div class="k">Email</div><div class="v">serenatakopiandspace@gmail.com</div></div>
+        <div class="info-row"><div class="k">Alamat</div><div class="v">{{ $kontak->alamat }}</div></div>
+        <div class="info-row"><div class="k">Jam Buka</div><div class="v">{{ $kontak->jam_buka }} - {{ $kontak->jam_tutup }}</div></div>
+        <div class="info-row"><div class="k">WhatsApp</div><div class="v">{{ $kontak->whatsapp }}</div></div>
+        <div class="info-row"><div class="k">Email</div><div class="v">{{ $kontak->email }}</div></div>
+
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $kontak->whatsapp) }}" target="_blank" class="btn-primary">
+            Chat via WhatsApp
+          </a>
+          @if($kontak->maps_link)
+            <a href="{{ $kontak->maps_link }}" target="_blank" class="btn-ghost">
+              Lihat di Google Maps
+            </a>
+          @endif
+        </div>
       </div>
-      <div class="map-block" style="padding:0;overflow:hidden;"> @if($kontak->maps_embed) <iframe src="{{ $kontak->maps_embed }}" width="100%" height="100%" style="border:0;min-height:280px;" allowfullscreen loading="lazy"></iframe> @else Peta lokasi belum diatur.<br>Atur di halaman admin. @endif </div>
+      <div class="map-block" style="padding:0;overflow:hidden;">
+        @if($kontak->maps_embed)
+          <iframe src="{{ $kontak->maps_embed }}" width="100%" height="100%"
+                  style="border:0;min-height:280px;" allowfullscreen loading="lazy"></iframe>
+        @else
+          Peta lokasi belum diatur.<br>Atur di halaman admin.
+        @endif
+      </div>
     </div>
   </div>
 </section>

@@ -72,7 +72,7 @@
           Isi tanggal &amp; jam dulu di atas untuk melihat meja yang kosong.
         </p>
         <div id="meja-grid" class="rsv-meja-grid"></div>
-        <input type="hidden" name="meja_id" id="input-meja-id" required>
+        <input type="hidden" name="meja_id" id="input-meja-id">
       </div>
 
       <!-- PILIH MENU -->

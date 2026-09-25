@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
+use App\Http\Controllers\Admin\MejaController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +18,6 @@ use Illuminate\Support\Facades\Route;
 | HALAMAN PUBLIC
 |--------------------------------------------------------------------------
 */
-use App\Http\Controllers\HomeController;
-// ... (taruh use di atas bareng use yang lain)
-
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 /*
@@ -25,9 +25,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 | HALAMAN USER (harus login)
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
     Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
@@ -70,7 +70,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/reservasi', [AdminReservationController::class, 'index'])->name('reservasi.index');
     Route::put('/reservasi/{reservasi}/confirm', [AdminReservationController::class, 'confirm'])->name('reservasi.confirm');
-    
+    Route::put('/reservasi/{reservasi}/confirm-bayar', [AdminReservationController::class, 'confirmBayar'])->name('reservasi.confirm-bayar');
+
+    Route::get('/meja', [MejaController::class, 'index'])->name('meja.index');
+    Route::post('/meja', [MejaController::class, 'store'])->name('meja.store');
+    Route::put('/meja/{meja}', [MejaController::class, 'update'])->name('meja.update');
+    Route::delete('/meja/{meja}', [MejaController::class, 'destroy'])->name('meja.destroy');
 });
 
 require __DIR__.'/auth.php';

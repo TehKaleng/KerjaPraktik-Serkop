@@ -25,9 +25,17 @@ class ContactController extends Controller
             'email'      => 'nullable|email',
             'maps_embed' => 'nullable|string',
             'maps_link'  => 'nullable|string',
+            'qris_image' => 'nullable|image|max:2048',
         ]);
 
         $kontak = ContactInfo::current();
+
+        if ($request->hasFile('qris_image')) {
+            $validated['qris_image'] = $request->file('qris_image')->store('qris', 'public');
+        } else {
+            unset($validated['qris_image']); // jangan timpa kalau nggak upload baru
+        }
+
         $kontak->update($validated);
 
         return back()->with('success', 'Info kontak berhasil diperbarui.');

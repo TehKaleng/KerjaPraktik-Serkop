@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,9 @@ class Meja extends Model
         'kapasitas',
     ];
 
+    /** Lama 1 sesi reservasi (menit). */
+    public const DURASI_SESI_MENIT = 120;
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class, 'meja_id');
@@ -25,17 +29,23 @@ class Meja extends Model
 
     /**
      * Cek apakah meja ini masih kosong di tanggal & jam tertentu.
-     * Asumsi 1 sesi reservasi = 2 jam.
+     * Bentrok kalau selisih waktu dengan reservasi lain < durasi sesi (2 jam).
+     * Dibandingkan sebagai datetime penuh, jadi aman untuk jam mendekati tengah malam.
      */
     public function tersediaPada(string $tanggal, string $jam): bool
     {
-        $jamMulai = \Carbon\Carbon::parse("$tanggal $jam")->subHours(2);
-        $jamSelesai = \Carbon\Carbon::parse("$tanggal $jam")->addHours(2);
+        $target = Carbon::parse("$tanggal $jam");
 
-        return !$this->reservations()
-            ->where('tanggal', $tanggal)
+        $bentrok = $this->reservations()
+            ->whereDate('tanggal', $tanggal)
             ->whereIn('status', ['pending', 'confirmed'])
-            ->whereBetween('jam', [$jamMulai->format('H:i'), $jamSelesai->format('H:i')])
-            ->exists();
+            ->get()
+            ->contains(function ($r) use ($target) {
+                $mulai = Carbon::parse($r->tanggal->format('Y-m-d') . ' ' . $r->jam);
+
+                return abs($target->diffInMinutes($mulai)) < self::DURASI_SESI_MENIT;
+            });
+
+        return !$bentrok;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\ReservationItem;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
@@ -66,6 +67,12 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
+        // reservation_items.menu_id pakai restrictOnDelete -> tanpa cek ini, hapus menu
+        // yang pernah dipesan bakal error 500.
+        if (ReservationItem::where('menu_id', $menu->id)->exists()) {
+            return back()->with('error', "Menu \"{$menu->nama}\" tidak bisa dihapus karena sudah pernah dipesan di reservasi.");
+        }
+
         $menu->delete();
 
         return back()->with('success', 'Menu berhasil dihapus.');

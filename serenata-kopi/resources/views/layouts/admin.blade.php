@@ -71,6 +71,18 @@
           {{ session('success') }}
         </div>
       @endif
+      @if(session('error'))
+        <div style="background:#FDEEEA;color:#C0442B;padding:12px 18px;border-radius:8px;margin-bottom:20px;font-size:14px;">
+          {{ session('error') }}
+        </div>
+      @endif
+      @if($errors->any())
+        <div style="background:#FDEEEA;color:#C0442B;padding:12px 18px;border-radius:8px;margin-bottom:20px;font-size:14px;">
+          @foreach($errors->all() as $e)
+            <div>• {{ $e }}</div>
+          @endforeach
+        </div>
+      @endif
       @yield('content')
     </div>
   </div>

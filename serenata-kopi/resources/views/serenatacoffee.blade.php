@@ -21,7 +21,18 @@
         <a href="#testimoni">Testimoni</a>
         <a href="#kontak">Kontak</a>
       </div>
-      <a href="{{ route('reservasi.form') }}" class="nav-btn">Reservasi</a>
+      <div style="display:flex;align-items:center;gap:16px;">
+        @auth
+          @if(auth()->user()->hasRole('admin'))
+            <a href="{{ route('admin.dashboard') }}" style="color:var(--text-light);font-size:14px;font-weight:600;">Panel Admin</a>
+          @else
+            <a href="{{ route('dashboard') }}" style="color:var(--text-light);font-size:14px;font-weight:600;">Dashboard Saya</a>
+          @endif
+        @else
+          <a href="{{ route('login') }}" style="color:var(--text-light);font-size:14px;font-weight:600;">Masuk</a>
+        @endauth
+        <a href="{{ route('reservasi.form') }}" class="nav-btn">Reservasi</a>
+      </div>
     </nav>
   </div>
 </header>

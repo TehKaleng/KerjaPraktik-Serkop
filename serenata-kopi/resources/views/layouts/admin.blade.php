@@ -12,6 +12,8 @@
 
 <div class="admin-wrap">
 
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
   <aside class="sidebar">
     <div class="sidebar-brand">
       <img src="{{ asset('images/SerenataLogoHeader.png') }}" alt="Serenata">
@@ -19,7 +21,7 @@
     <nav class="sidebar-nav">
       <a href="{{ route('admin.meja.index') }}" class="{{ request()->routeIs('admin.meja.*') ? 'active' : '' }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          Meja
+        Meja
       </a>
       <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -59,12 +61,37 @@
 
   <div class="main">
     <div class="topbar">
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu navigasi" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
       <h1>@yield('title', 'Dashboard')</h1>
-      <div class="admin-user">
-        <span>{{ auth()->user()->name ?? 'Admin Serenata' }}</span>
-        <div class="avatar">{{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}</div>
-      </div>
+
+      {{-- Klik nama/avatar -> muncul menu: Edit Profil, Lihat Website, Keluar --}}
+      <details class="user-menu" id="userMenu">
+        <summary class="admin-user">
+          <span>{{ auth()->user()->name ?? 'Admin Serenata' }}</span>
+          <div class="avatar">{{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}</div>
+        </summary>
+        <div class="user-menu-dropdown">
+          <a href="{{ route('profile.edit') }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Edit Profil
+          </a>
+          <a href="{{ route('home') }}" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+            Lihat Website
+          </a>
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+              Keluar
+            </button>
+          </form>
+        </div>
+      </details>
     </div>
+
     <div class="content">
       @if(session('success'))
         <div style="background:#E6F4EA;color:#1E7B3E;padding:12px 18px;border-radius:8px;margin-bottom:20px;font-size:14px;">
@@ -88,6 +115,82 @@
   </div>
 
 </div>
+
+{{-- Modal konfirmasi hapus (dipakai form dengan class "confirm-delete") --}}
+<div class="confirm-modal-overlay" id="confirmModalOverlay">
+  <div class="confirm-modal">
+    <h3>Konfirmasi</h3>
+    <p id="confirmModalMessage"></p>
+    <div class="confirm-modal-actions">
+      <button type="button" class="btn btn-outline" id="confirmModalCancel">Batal</button>
+      <button type="button" class="btn btn-orange" id="confirmModalOk">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- Modal konfirmasi ----
+  let formToSubmit = null;
+  const overlay = document.getElementById('confirmModalOverlay');
+  const msgEl = document.getElementById('confirmModalMessage');
+  const btnOk = document.getElementById('confirmModalOk');
+  const btnCancel = document.getElementById('confirmModalCancel');
+
+  document.querySelectorAll('form.confirm-delete').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      formToSubmit = form;
+      msgEl.textContent = form.dataset.message || 'Yakin ingin melanjutkan tindakan ini?';
+      overlay.classList.add('show');
+    });
+  });
+
+  btnOk.addEventListener('click', function () {
+    overlay.classList.remove('show');
+    if (formToSubmit) formToSubmit.submit();
+  });
+  btnCancel.addEventListener('click', function () {
+    overlay.classList.remove('show');
+    formToSubmit = null;
+  });
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) { overlay.classList.remove('show'); formToSubmit = null; }
+  });
+
+  // ---- Dropdown profil: tutup kalau klik di luar menu ----
+  const userMenu = document.getElementById('userMenu');
+  document.addEventListener('click', function (e) {
+    if (userMenu.hasAttribute('open') && !userMenu.contains(e.target)) {
+      userMenu.removeAttribute('open');
+    }
+  });
+})();
+</script>
+
+<script>
+// Sidebar sebagai laci di tablet & HP
+(function () {
+  var toggle = document.getElementById('menuToggle');
+  var backdrop = document.getElementById('sidebarBackdrop');
+  if (!toggle || !backdrop) return;
+
+  function atur(buka) {
+    document.body.classList.toggle('sidebar-open', buka);
+    toggle.setAttribute('aria-expanded', buka ? 'true' : 'false');
+  }
+
+  toggle.addEventListener('click', function () {
+    atur(!document.body.classList.contains('sidebar-open'));
+  });
+  backdrop.addEventListener('click', function () { atur(false); });
+  document.querySelectorAll('.sidebar-nav a').forEach(function (a) {
+    a.addEventListener('click', function () { atur(false); });
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') atur(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 960) atur(false); });
+})();
+</script>
 
 </body>
 </html>

@@ -45,4 +45,13 @@ class ReservationController extends Controller
 
         return back()->with('success', 'Pembayaran dikonfirmasi lunas.');
     }
+
+    public function destroy(Reservation $reservasi)
+    {
+        // reservation_items ikut kehapus otomatis (cascadeOnDelete di migration),
+        // meja jadi otomatis kosong lagi buat jam yang sama.
+        $reservasi->delete();
+
+        return back()->with('success', 'Reservasi berhasil dihapus.');
+    }
 }

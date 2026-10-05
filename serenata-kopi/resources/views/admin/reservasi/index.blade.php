@@ -52,6 +52,11 @@
                 <button type="submit" class="btn btn-orange btn-sm" style="width:100%;">Konfirmasi Bayar</button>
               </form>
             @endif
+            <form method="POST" action="{{ route('admin.reservasi.destroy', $r['id']) }}" onsubmit="return confirm('Yakin hapus reservasi {{ $r['nama'] }} ini? Tidak bisa dibatalkan.')">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-danger-ghost btn-sm" style="width:100%;">Hapus</button>
+            </form>
           </td>
         </tr>
       @empty

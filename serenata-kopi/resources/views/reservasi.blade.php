@@ -188,6 +188,16 @@
   }
   .rsv-bayar-card p{font-size:12.5px;color:var(--text-muted);margin-top:4px;}
   @media(max-width:700px){.rsv-grid-2,.rsv-grid-3,.rsv-bayar-opsi{grid-template-columns:1fr;}}
+
+  /* Responsif HP */
+  @media(max-width:480px){
+    .rsv-card{padding:18px;}
+    .rsv-lantai-tabs{flex-wrap:wrap;}
+    .rsv-tab{padding:9px 16px;}
+    .rsv-qty-btn{width:36px;height:36px;}
+    .rsv-menu-item{gap:12px;}
+    .rsv-menu-nama{font-size:14.5px;}
+  }
 </style>
 
 <script>

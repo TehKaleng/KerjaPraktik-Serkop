@@ -12,7 +12,7 @@
           Halo, {{ auth()->user()->name }}
         </h2>
       </div>
-      <div style="display:flex;gap:12px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <a href="{{ route('reservasi.form') }}" class="btn-primary">+ Reservasi Baru</a>
         <a href="{{ route('profile.edit') }}" class="btn-ghost">Edit Profil</a>
         <form method="POST" action="{{ route('logout') }}">
@@ -102,5 +102,12 @@
   .dash-item-list li{padding:3px 0;}
   .dash-reservasi-foot{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:var(--text-muted);padding-top:10px;border-top:1px solid rgba(245,241,234,0.1);}
   .dash-reservasi-foot strong{color:var(--orange-light);font-size:15px;}
+
+  /* Responsif HP */
+  .dash-reservasi-foot{flex-wrap:wrap;gap:6px 12px;}
+  @media(max-width:480px){
+    .dash-card{padding:18px;}
+    .dash-reservasi{padding:14px;}
+  }
 </style>
 @endsection

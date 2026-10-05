@@ -71,6 +71,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/reservasi', [AdminReservationController::class, 'index'])->name('reservasi.index');
     Route::put('/reservasi/{reservasi}/confirm', [AdminReservationController::class, 'confirm'])->name('reservasi.confirm');
     Route::put('/reservasi/{reservasi}/confirm-bayar', [AdminReservationController::class, 'confirmBayar'])->name('reservasi.confirm-bayar');
+    Route::delete('/reservasi/{reservasi}', [AdminReservationController::class, 'destroy'])->name('reservasi.destroy');
 
     Route::get('/meja', [MejaController::class, 'index'])->name('meja.index');
     Route::post('/meja', [MejaController::class, 'store'])->name('meja.store');

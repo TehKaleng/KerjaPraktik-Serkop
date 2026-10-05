@@ -52,6 +52,14 @@
         .guest-back{margin-top:20px;}
         .guest-back a{color:var(--text-muted);font-size:13.5px;}
         .guest-back a:hover{color:var(--text-light);}
+    
+        /* Responsif HP */
+        @media(max-width:480px){
+            .guest-wrap{padding:28px 16px;justify-content:flex-start;}
+            .guest-logo{margin-bottom:20px;}
+            .guest-logo img{height:40px;}
+            .guest-card{padding:22px;}
+        }
     </style>
 </head>
 <body>

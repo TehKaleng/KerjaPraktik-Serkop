@@ -17,7 +17,7 @@
         <a href="{{ route('profile.edit') }}" class="btn-ghost">Edit Profil</a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="btn-ghost" style="border:none;cursor:pointer;font:inherit;">Logout</button>
+          <button type="submit" class="btn-ghost" style="background:transparent;cursor:pointer;font-family:inherit;">Logout</button>
         </form>
       </div>
     </div>

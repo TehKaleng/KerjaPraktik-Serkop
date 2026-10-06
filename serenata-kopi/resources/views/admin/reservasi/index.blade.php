@@ -23,7 +23,7 @@
           <td>Rp {{ number_format($r['total'], 0, ',', '.') }}</td>
           <td>
             <span class="badge {{ $r['status_bayar'] === 'lunas' ? 'badge-active' : 'badge-pending' }}">
-              {{ strtoupper($r['metode_bayar']) }} ·
+              {{ $r['metode_bayar'] === 'qris' ? 'QRIS' : 'Kasir' }} ·
               @if($r['status_bayar'] === 'lunas') Lunas
               @elseif($r['status_bayar'] === 'menunggu_konfirmasi') Menunggu
               @else Belum
@@ -45,14 +45,14 @@
                 <button type="submit" class="btn btn-outline btn-sm" style="width:100%;">Konfirmasi Hadir</button>
               </form>
             @endif
-            @if($r['status_bayar'] === 'menunggu_konfirmasi')
-              <form method="POST" action="{{ route('admin.reservasi.confirm-bayar', $r['id']) }}">
+            @if($r['status_bayar'] !== 'lunas')
+              <form method="POST" action="{{ route('admin.reservasi.confirm-bayar', $r['id']) }}" class="confirm-delete" data-message="Tandai pembayaran {{ $r['nama'] }} (Rp {{ number_format($r['total'], 0, ',', '.') }}) sebagai LUNAS? Pastikan uangnya sudah diterima di kasir.">
                 @csrf
                 @method('PUT')
-                <button type="submit" class="btn btn-orange btn-sm" style="width:100%;">Konfirmasi Bayar</button>
+                <button type="submit" class="btn btn-orange btn-sm" style="width:100%;">{{ $r['status_bayar'] === 'menunggu_konfirmasi' ? 'Konfirmasi Bayar' : 'Tandai Lunas' }}</button>
               </form>
             @endif
-            <form method="POST" action="{{ route('admin.reservasi.destroy', $r['id']) }}" onsubmit="return confirm('Yakin hapus reservasi {{ $r['nama'] }} ini? Tidak bisa dibatalkan.')">
+            <form method="POST" action="{{ route('admin.reservasi.destroy', $r['id']) }}" class="confirm-delete" data-message="Yakin hapus reservasi {{ $r['nama'] }} ini? Tidak bisa dibatalkan.">
               @csrf
               @method('DELETE')
               <button type="submit" class="btn btn-danger-ghost btn-sm" style="width:100%;">Hapus</button>

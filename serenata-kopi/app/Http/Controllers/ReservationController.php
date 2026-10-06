@@ -12,11 +12,22 @@ use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
+    /**
+     * Saklar pembayaran QRIS lewat website.
+     *   false = semua reservasi dibayar di kasir. QRIS dari mesin EDC dibuat kasir
+     *           saat pelanggan datang (karena QRIS EDC bersifat dinamis, bukan gambar tetap).
+     *   true  = opsi QRIS di website aktif lagi. Ubah ke true HANYA kalau cafe sudah punya
+     *           QRIS statis dan fotonya sudah diupload di /admin/kontak.
+     */
+    private const QRIS_AKTIF = false;
+
     public function create()
     {
         $menusByKategori = Menu::orderBy('nama')->get()->groupBy('kategori');
 
-        return view('reservasi', compact('menusByKategori'));
+        $qrisAktif = self::QRIS_AKTIF;
+
+        return view('reservasi', compact('menusByKategori', 'qrisAktif'));
     }
 
     /**
@@ -55,12 +66,15 @@ class ReservationController extends Controller
             'jumlah_orang' => 'required|integer|min:1',
             'meja_id'      => 'required|exists:meja,id',
             'catatan'      => 'nullable|string',
-            'metode_bayar' => 'required|in:qris,cash',
+            'metode_bayar' => 'nullable|in:qris,cash',
             'menu_id'      => 'required|array|min:1',
             'menu_id.*'    => 'exists:menus,id',
             'qty'          => 'required|array',
             'qty.*'        => 'integer|min:1',
         ]);
+
+        // Selama QRIS website nonaktif, semua reservasi otomatis "bayar di kasir" (disimpan sebagai 'cash').
+        $metodeBayar = (self::QRIS_AKTIF && ($validated['metode_bayar'] ?? null) === 'qris') ? 'qris' : 'cash';
 
         $meja = Meja::findOrFail($validated['meja_id']);
 
@@ -83,7 +97,7 @@ class ReservationController extends Controller
             ];
         }
 
-        $reservation = DB::transaction(function () use ($validated, $total, $itemsData) {
+        $reservation = DB::transaction(function () use ($validated, $total, $itemsData, $metodeBayar) {
             $reservation = Reservation::create([
                 'user_id'      => auth()->id(),
                 'meja_id'      => $validated['meja_id'],
@@ -94,8 +108,8 @@ class ReservationController extends Controller
                 'jumlah_orang' => $validated['jumlah_orang'],
                 'catatan'      => $validated['catatan'] ?? null,
                 'status'       => 'pending',
-                'metode_bayar' => $validated['metode_bayar'],
-                'status_bayar' => $validated['metode_bayar'] === 'qris' ? 'menunggu_konfirmasi' : 'belum_bayar',
+                'metode_bayar' => $metodeBayar,
+                'status_bayar' => $metodeBayar === 'qris' ? 'menunggu_konfirmasi' : 'belum_bayar',
                 'total_harga'  => $total,
             ]);
 
@@ -108,7 +122,7 @@ class ReservationController extends Controller
 
         auth()->user()->notify(new ReservasiBerhasil($reservation));
 
-        if ($validated['metode_bayar'] === 'qris') {
+        if ($metodeBayar === 'qris') {
             return redirect()->route('reservasi.konfirmasi', $reservation);
         }
 
@@ -140,6 +154,8 @@ class ReservationController extends Controller
             return "- {$item->menu->nama} x{$item->qty} (Rp " . number_format($item->subtotal(), 0, ',', '.') . ")";
         })->implode("\n");
 
+        $labelBayar = $reservation->metode_bayar === 'qris' ? 'QRIS' : 'Bayar di kasir saat datang';
+
         $pesan = "Halo Serenata Kopi & Space, saya mau konfirmasi reservasi:\n"
             . "Nama: {$reservation->nama}\n"
             . "Meja: " . ($reservation->meja->kode ?? '-') . "\n"
@@ -148,7 +164,7 @@ class ReservationController extends Controller
             . "Jumlah orang: {$reservation->jumlah_orang}\n"
             . "Pesanan:\n{$daftarMenu}\n"
             . "Total: Rp " . number_format($reservation->total_harga, 0, ',', '.') . "\n"
-            . "Metode bayar: " . strtoupper($reservation->metode_bayar) . "\n"
+            . "Pembayaran: " . $labelBayar . "\n"
             . ($reservation->catatan ? "Catatan: {$reservation->catatan}\n" : '');
 
         $waUrl = "https://wa.me/{$nomorCafe}?text=" . urlencode($pesan);

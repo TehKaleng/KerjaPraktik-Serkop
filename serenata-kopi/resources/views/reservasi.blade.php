@@ -117,23 +117,35 @@
 
       <!-- PEMBAYARAN -->
       <div class="rsv-card">
-        <h3>6. Metode Pembayaran</h3>
-        <div class="rsv-bayar-opsi">
-          <label class="rsv-bayar-card">
-            <input type="radio" name="metode_bayar" value="qris" checked>
-            <div>
-              <strong>QRIS</strong>
-              <p>Scan &amp; bayar sekarang, kode QR muncul setelah checkout.</p>
+        <h3>6. Pembayaran</h3>
+        @if($qrisAktif ?? false)
+          <div class="rsv-bayar-opsi">
+            <label class="rsv-bayar-card">
+              <input type="radio" name="metode_bayar" value="qris" checked>
+              <div>
+                <strong>QRIS</strong>
+                <p>Scan &amp; bayar sekarang, kode QR muncul setelah checkout.</p>
+              </div>
+            </label>
+            <label class="rsv-bayar-card">
+              <input type="radio" name="metode_bayar" value="cash">
+              <div>
+                <strong>Bayar di Kasir</strong>
+                <p>Bayar langsung saat datang ke cafe.</p>
+              </div>
+            </label>
+          </div>
+        @else
+          <div class="rsv-bayar-opsi rsv-bayar-tunggal">
+            <div class="rsv-bayar-card" style="cursor:default;">
+              <input type="hidden" name="metode_bayar" value="cash">
+              <div>
+                <strong>Bayar di Kasir</strong>
+                <p>Pembayaran dilakukan di kasir saat kamu datang, bisa lewat QRIS, kartu, atau tunai. Pesananmu sudah tercatat, jadi kasir tinggal memprosesnya.</p>
+              </div>
             </div>
-          </label>
-          <label class="rsv-bayar-card">
-            <input type="radio" name="metode_bayar" value="cash">
-            <div>
-              <strong>Bayar di Tempat</strong>
-              <p>Bayar langsung pas datang ke cafe.</p>
-            </div>
-          </label>
-        </div>
+          </div>
+        @endif
       </div>
 
       <button type="submit" class="btn-primary" style="border:none;cursor:pointer;width:100%;padding:16px;font-size:16px;">
@@ -182,6 +194,7 @@
   #ringkasan-list .rsv-ring-item{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;color:var(--text-light);}
   .rsv-total{display:flex;justify-content:space-between;padding-top:14px;margin-top:10px;border-top:1px solid rgba(245,241,234,0.15);font-weight:800;font-size:17px;color:var(--text-light);}
   .rsv-bayar-opsi{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .rsv-bayar-tunggal{grid-template-columns:1fr;}
   .rsv-bayar-card{
     display:flex;gap:10px;align-items:flex-start;padding:14px;border-radius:10px;
     border:1px solid rgba(245,241,234,0.2);cursor:pointer;color:var(--text-light);

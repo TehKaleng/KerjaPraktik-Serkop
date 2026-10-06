@@ -69,7 +69,7 @@
           @endif
 
           <div class="dash-reservasi-foot">
-            <span>{{ $r->jumlah_orang }} orang · {{ strtoupper($r->metode_bayar) }}</span>
+            <span>{{ $r->jumlah_orang }} orang · {{ $r->metode_bayar === 'qris' ? 'QRIS' : 'Bayar di Kasir' }}</span>
             <strong>Total: Rp {{ number_format($r->total_harga, 0, ',', '.') }}</strong>
           </div>
         </div>

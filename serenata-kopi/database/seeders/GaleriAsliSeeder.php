@@ -26,6 +26,12 @@ class GaleriAsliSeeder extends Seeder
         ['lantai-2-a.jpg', 'Lantai 2'],
         ['tampak-depan-malam.jpg', 'Tampak depan di malam hari'],
         ['area-bar.jpg', 'Area bar dan halaman depan'],
+        ['neon-serenata.jpg', 'Sudut neon Serenata'],
+        ['pemandangan-lrt.jpg', 'Pemandangan jalan dan LRT dari lantai atas'],
+        ['rooftop-malam.jpg', 'Area terbuka di malam hari'],
+        ['ruang-lampu-bola.jpg', 'Sudut lampu bola dan poster'],
+        ['ruang-kayu.jpg', 'Ruang berdinding kayu'],
+        ['halaman-malam.jpg', 'Area luar di malam hari'],
     ];
 
     public function run(): void

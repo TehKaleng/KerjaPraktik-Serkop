@@ -113,7 +113,7 @@
 
   @media (min-width:821px){
     /* Galeri Suasana: tingginya ikut tinggi layar supaya selalu muat dan berada di tengah */
-    #suasana .ambience-grid{height:clamp(220px, calc(var(--sec-h) - 250px), 440px);}
+    #suasana .ambience-grid{height:clamp(220px, calc(var(--sec-h) - 300px), 440px);}
 
     /* Menu: daftar kartu punya area gulir sendiri, jadi bagian ini selalu pas satu layar.
        Kalau menunya sedikit, tidak ada gulir dan semuanya rata tengah. */
@@ -433,6 +433,55 @@
   @media (max-width:820px){
     .about-figure{width:min(100%,420px);height:auto;min-height:0;justify-self:center;margin-bottom:14px;}
   }
+
+  /* ===== Galeri Suasana: grid 5 foto, tombol, dan tampilan besar ===== */
+  .ambience-grid .b5{background:linear-gradient(200deg,var(--ink),var(--orange-light));}
+  .ambience-grid div[data-galeri-i]{cursor:zoom-in;transition:filter .25s ease;}
+  .ambience-grid div[data-galeri-i]:hover{filter:brightness(1.1);}
+  .ambience-grid div[data-galeri-i]:focus-visible{outline:2px solid var(--orange);outline-offset:3px;}
+  .gal-aksi{display:flex;justify-content:flex-end;margin-top:14px;}
+  .gal-semua{
+    padding:9px 20px;border-radius:999px;border:1px solid var(--orange);background:transparent;
+    color:var(--orange-light);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    transition:background .2s ease,color .2s ease;
+  }
+  .gal-semua:hover{background:var(--orange);color:#fff;}
+
+  .lightbox{
+    position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    background:rgba(8,12,28,0.92);padding:24px 72px;
+  }
+  .lightbox[hidden]{display:none;}
+  body.lb-open{overflow:hidden;}
+  .lb-isi{margin:0;max-width:100%;display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .lb-isi img{
+    display:block;max-width:min(92vw,1100px);max-height:76vh;width:auto;height:auto;
+    object-fit:contain;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  }
+  .lb-isi figcaption{display:flex;gap:16px;align-items:center;justify-content:center;color:var(--text-light);font-size:14px;text-align:center;}
+  #lbNo{color:var(--text-muted);font-size:13px;}
+  .lb-tutup, .lb-nav{
+    position:absolute;display:flex;align-items:center;justify-content:center;
+    width:46px;height:46px;border-radius:50%;border:1px solid rgba(245,241,234,0.3);
+    background:rgba(36,58,107,0.85);color:var(--text-light);font-family:inherit;cursor:pointer;
+    transition:background .2s ease,border-color .2s ease;
+  }
+  .lb-tutup:hover, .lb-nav:hover{background:var(--orange);border-color:var(--orange);}
+  .lb-tutup{top:18px;right:18px;font-size:28px;line-height:1;}
+  .lb-nav{top:50%;transform:translateY(-50%);font-size:34px;line-height:1;padding-bottom:4px;}
+  .lb-prev{left:16px;}
+  .lb-next{right:16px;}
+
+  @media (max-width:820px){
+    #suasana .ambience-grid .b1{grid-column:1 / -1;height:240px;}   /* foto besar selebar layar, sisanya berpasangan */
+    .gal-aksi{justify-content:center;}
+    .lightbox{padding:70px 12px 24px;}
+    .lb-nav{top:auto;bottom:18px;transform:none;}
+    .lb-prev{left:calc(50% - 60px);}
+    .lb-next{right:calc(50% - 60px);}
+    .lb-isi img{max-height:64vh;}
+    .lb-isi figcaption{padding-bottom:64px;}
+  }
 </style>
 </head>
 <body>
@@ -652,15 +701,23 @@
       <div class="section-tag">SUASANA</div>
       <h2>Sudut-sudut favorit di Serenata</h2>
     </div>
+    {{-- Grid menampilkan 5 foto pertama (kotak besar + 4 kotak kecil). Semua foto bisa dilihat lewat tampilan besar. --}}
     <div class="ambience-grid">
-      @forelse($fotos as $i => $foto)
-        <div class="{{ $i === 0 ? 'b1' : 'b' . ($i + 1) }} rv rv-zoom"
+      @forelse($fotos->take(5) as $i => $foto)
+        <div class="{{ $i === 0 ? 'b1' : 'b' . ($i + 1) }} rv rv-zoom" data-galeri-i="{{ $i }}" role="button" tabindex="0"
+             aria-label="Buka foto{{ $foto->keterangan ? ': ' . $foto->keterangan : '' }}"
              style="--d:{{ number_format($i * 0.12, 2) }}s;background-image:url('{{ asset('storage/' . $foto->foto) }}');background-size:cover;background-position:center;">
         </div>
       @empty
-        <div class="b1 rv rv-zoom"></div><div class="b2 rv rv-zoom" style="--d:.12s"></div><div class="b3 rv rv-zoom" style="--d:.24s"></div><div class="b4 rv rv-zoom" style="--d:.36s"></div>
+        <div class="b1 rv rv-zoom"></div><div class="b2 rv rv-zoom" style="--d:.12s"></div><div class="b3 rv rv-zoom" style="--d:.24s"></div><div class="b4 rv rv-zoom" style="--d:.36s"></div><div class="b5 rv rv-zoom" style="--d:.48s"></div>
       @endforelse
     </div>
+
+    @if($fotos->count() > 0)
+      <div class="gal-aksi">
+        <button type="button" class="gal-semua" id="galBuka">Lihat semua foto ({{ $fotos->count() }}) &rarr;</button>
+      </div>
+    @endif
   </div>
 </section>
 
@@ -753,6 +810,22 @@
 <a class="wa-float" href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $kontak->whatsapp) }}" target="_blank" rel="noopener" aria-label="Chat via WhatsApp" title="Chat via WhatsApp">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
 </a>
+
+{{-- Tampilan besar galeri Suasana --}}
+@php
+    $dataGaleri = $fotos->map(fn ($f) => ['src' => asset('storage/' . $f->foto), 'ket' => $f->keterangan])->values();
+@endphp
+<script type="application/json" id="data-galeri">@json($dataGaleri)</script>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galeri foto suasana Serenata" hidden>
+  <button type="button" class="lb-tutup" aria-label="Tutup galeri">&times;</button>
+  <button type="button" class="lb-nav lb-prev" aria-label="Foto sebelumnya">&lsaquo;</button>
+  <figure class="lb-isi">
+    <img id="lbFoto" alt="">
+    <figcaption><span id="lbKet"></span><span id="lbNo"></span></figcaption>
+  </figure>
+  <button type="button" class="lb-nav lb-next" aria-label="Foto berikutnya">&rsaquo;</button>
+</div>
+
 
 <script>
 (function () {
@@ -1056,6 +1129,96 @@
   window.addEventListener('resize', function () {
     if (window.innerWidth > 1024) atur(false);
   });
+})();
+</script>
+
+<script>
+// Tampilan besar galeri Suasana: panah, keyboard, geser sentuh, dan klik di luar foto
+(function () {
+  var dataEl = document.getElementById('data-galeri');
+  var kotak = document.getElementById('lightbox');
+  if (!dataEl || !kotak) return;
+
+  var foto = [];
+  try { foto = JSON.parse(dataEl.textContent); } catch (e) { foto = []; }
+  if (!foto.length) return;
+
+  var gambar = document.getElementById('lbFoto');
+  var ket = document.getElementById('lbKet');
+  var nomor = document.getElementById('lbNo');
+  var tutup = kotak.querySelector('.lb-tutup');
+  var sebelum = kotak.querySelector('.lb-prev');
+  var sesudah = kotak.querySelector('.lb-next');
+  var indeks = 0;
+  var pemicu = null;
+
+  function tampilkan(i) {
+    indeks = (i + foto.length) % foto.length;             // melingkar: setelah foto terakhir kembali ke pertama
+    var f = foto[indeks];
+    gambar.src = f.src;
+    gambar.alt = f.ket || 'Foto suasana Serenata';
+    ket.textContent = f.ket || '';
+    nomor.textContent = (indeks + 1) + ' / ' + foto.length;
+    // muat foto tetangga lebih dulu supaya perpindahan terasa cepat
+    [indeks + 1, indeks - 1].forEach(function (j) {
+      var p = new Image();
+      p.src = foto[(j + foto.length) % foto.length].src;
+    });
+  }
+
+  function buka(i, dari) {
+    pemicu = dari || null;
+    tampilkan(i);
+    kotak.hidden = false;
+    document.body.classList.add('lb-open');
+    tutup.focus();
+  }
+
+  function tutupGaleri() {
+    kotak.hidden = true;
+    document.body.classList.remove('lb-open');
+    gambar.removeAttribute('src');
+    if (pemicu && pemicu.focus) pemicu.focus();
+  }
+
+  // Pemicu: klik/Enter/Spasi pada kotak foto, dan tombol "Lihat semua foto"
+  document.querySelectorAll('[data-galeri-i]').forEach(function (el) {
+    el.addEventListener('click', function () { buka(parseInt(el.dataset.galeriI, 10) || 0, el); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); buka(parseInt(el.dataset.galeriI, 10) || 0, el); }
+    });
+  });
+  var tombolSemua = document.getElementById('galBuka');
+  if (tombolSemua) tombolSemua.addEventListener('click', function () { buka(0, tombolSemua); });
+
+  sebelum.addEventListener('click', function () { tampilkan(indeks - 1); });
+  sesudah.addEventListener('click', function () { tampilkan(indeks + 1); });
+  tutup.addEventListener('click', tutupGaleri);
+  kotak.addEventListener('click', function (e) { if (e.target === kotak) tutupGaleri(); });
+
+  // Keyboard: panah kiri/kanan, Esc, dan Tab dijaga tetap di dalam tampilan besar
+  document.addEventListener('keydown', function (e) {
+    if (kotak.hidden) return;
+    if (e.key === 'Escape') { tutupGaleri(); }
+    else if (e.key === 'ArrowLeft') { tampilkan(indeks - 1); }
+    else if (e.key === 'ArrowRight') { tampilkan(indeks + 1); }
+    else if (e.key === 'Tab') {
+      var urut = [tutup, sebelum, sesudah];
+      var sekarang = urut.indexOf(document.activeElement);
+      e.preventDefault();
+      urut[(sekarang + (e.shiftKey ? -1 : 1) + urut.length) % urut.length].focus();
+    }
+  });
+
+  // Geser sentuh di HP (tombol panah tetap tersedia untuk yang memakai mouse)
+  var awalX = null;
+  kotak.addEventListener('touchstart', function (e) { awalX = e.changedTouches[0].clientX; }, { passive: true });
+  kotak.addEventListener('touchend', function (e) {
+    if (awalX === null) return;
+    var selisih = e.changedTouches[0].clientX - awalX;
+    awalX = null;
+    if (Math.abs(selisih) > 50) tampilkan(indeks + (selisih < 0 ? 1 : -1));
+  }, { passive: true });
 })();
 </script>
 

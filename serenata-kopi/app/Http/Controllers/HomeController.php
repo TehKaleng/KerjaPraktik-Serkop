@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         return view('serenatacoffee', [
             'menus'       => $this->menuTerurut(),
-            'fotos'       => GalleryPhoto::latest()->take(4)->get(),
+            'fotos'       => GalleryPhoto::latest()->take(30)->get(), // grid menampilkan 5 pertama; sisanya di tampilan besar
             'testimonis'  => Testimonial::where('tampil', true)->latest()->take(6)->get(),
             'kontak'      => ContactInfo::current(),
         ]);

@@ -213,6 +213,11 @@
   .stat-num{font-size:clamp(28px,3.6vw,42px);font-weight:800;line-height:1.15;color:var(--orange-light);}
   .stat-num-text{font-size:clamp(22px,2.6vw,30px);padding-top:6px;}
   .stat-label{font-size:13.5px;color:var(--text-muted);margin-top:6px;}
+  .stat-sub{font-size:12px;color:var(--text-muted);opacity:.8;margin-top:2px;}   /* baris kecil jam weekend */
+
+  /* ===== Jam operasional di bagian Kontak: weekday & weekend bertumpuk ===== */
+  .jam-list{display:grid;gap:4px;}
+  .jam-list span{display:inline-block;min-width:122px;color:var(--text-muted);}
 
   /* ===== Ajakan reservasi ===== */
   .cta-band{background:linear-gradient(120deg,var(--orange),#c9421d);padding:48px 0;}
@@ -311,6 +316,7 @@
     .info-row .k{min-width:0;}
     .logo-mark img{max-width:min(160px,50vw);}
     .wa-float{width:52px;height:52px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));}
+    .jam-list span{min-width:112px;}
   }
 
   /* Kartu menu masuk bertahap setiap kali daftar menu muncul di layar.
@@ -587,9 +593,11 @@
       <div class="stat-num"><span data-count="3">3</span></div>
       <div class="stat-label">Lantai untuk bersantai</div>
     </div>
+    {{-- Jam operasional: angka besar = Senin-Jumat, baris kecil = Sabtu-Minggu (diatur di /admin/kontak) --}}
     <div class="stat rv" style="--d:.3s">
-      <div class="stat-num stat-num-text">{{ $kontak->jam_buka }}&ndash;{{ $kontak->jam_tutup }}</div>
-      <div class="stat-label">Jam operasional</div>
+      <div class="stat-num stat-num-text">{{ \App\Models\ContactInfo::formatJam($kontak->jam_buka) }}&ndash;{{ \App\Models\ContactInfo::formatJam($kontak->jam_tutup) }}</div>
+      <div class="stat-label">Jam operasional Sen&ndash;Jum</div>
+      <div class="stat-sub">Sab&ndash;Min: {{ $kontak->teksJamWeekend() }}</div>
     </div>
   </div>
 </div>
@@ -770,7 +778,14 @@
     <div class="contact">
       <div>
         <div class="info-row rv" style="--d:0s"><div class="k">Alamat</div><div class="v">{{ $kontak->alamat }}</div></div>
-        <div class="info-row rv" style="--d:0.08s"><div class="k">Jam Buka</div><div class="v">{{ $kontak->jam_buka }} - {{ $kontak->jam_tutup }}</div></div>
+        {{-- Jam weekday & weekend dari /admin/kontak --}}
+        <div class="info-row rv" style="--d:0.08s">
+          <div class="k">Jam Buka</div>
+          <div class="v jam-list">
+            <div><span>Senin - Jumat</span>{{ $kontak->teksJamWeekday() }}</div>
+            <div><span>Sabtu - Minggu</span>{{ $kontak->teksJamWeekend() }}</div>
+          </div>
+        </div>
         <div class="info-row rv" style="--d:0.16s"><div class="k">WhatsApp</div><div class="v">{{ $kontak->whatsapp }}</div></div>
         <div class="info-row rv" style="--d:0.24s"><div class="k">Email</div><div class="v">{{ $kontak->email }}</div></div>
 

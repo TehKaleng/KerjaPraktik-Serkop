@@ -13,10 +13,23 @@ class HomeController extends Controller
     public function index()
     {
         return view('serenatacoffee', [
-            'menus'       => Menu::latest()->get(),
+            'menus'       => $this->menuTerurut(),
             'fotos'       => GalleryPhoto::latest()->take(4)->get(),
             'testimonis'  => Testimonial::where('tampil', true)->latest()->take(6)->get(),
             'kontak'      => ContactInfo::current(),
         ]);
+    }
+
+    /**
+     * Menu diurutkan per kategori (kopi, non-kopi, kudapan, makanan, tambahan),
+     * lalu sesuai urutan input di dalam kategori. Urutan tab di halaman depan ikut urutan ini.
+     */
+    private function menuTerurut()
+    {
+        $urutan = ['kopi', 'non-kopi', 'kudapan', 'makanan', 'tambahan'];
+
+        return Menu::orderBy('id')->get()
+            ->sortBy(fn ($menu) => ($i = array_search($menu->kategori, $urutan)) === false ? 99 : $i)
+            ->values();
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menu;
 use App\Models\Testimonial;
 use App\Models\ContactInfo;
 use Illuminate\Database\Seeder;
@@ -11,19 +10,8 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        // Menu contoh
-        Menu::firstOrCreate(
-            ['nama' => 'Serenata Signature'],
-            ['kategori' => 'kopi', 'harga' => 28000, 'deskripsi' => 'Espresso, susu oat, sirup gula aren.']
-        );
-        Menu::firstOrCreate(
-            ['nama' => 'Matcha Latte'],
-            ['kategori' => 'non-kopi', 'harga' => 26000, 'deskripsi' => 'Matcha grade ceremonial dengan susu segar.']
-        );
-        Menu::firstOrCreate(
-            ['nama' => 'Butter Croissant'],
-            ['kategori' => 'kudapan', 'harga' => 22000, 'deskripsi' => 'Dipanggang setiap pagi, renyah di luar, lembut di dalam.']
-        );
+        // Menu asli kafe (lihat MenuAsliSeeder)
+        $this->call(MenuAsliSeeder::class);
 
         // Testimoni contoh
         Testimonial::firstOrCreate(

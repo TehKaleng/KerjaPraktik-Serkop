@@ -23,7 +23,10 @@ class ReservationController extends Controller
 
     public function create()
     {
-        $menusByKategori = Menu::orderBy('nama')->get()->groupBy('kategori');
+        // Kelompok menu diurutkan: kopi, non-kopi, kudapan, makanan, tambahan (di dalam kelompok: abjad)
+        $urutan = ['kopi', 'non-kopi', 'kudapan', 'makanan', 'tambahan'];
+        $menusByKategori = Menu::orderBy('nama')->get()->groupBy('kategori')
+            ->sortBy(fn ($items, $kategori) => ($i = array_search($kategori, $urutan)) === false ? 99 : $i);
 
         $qrisAktif = self::QRIS_AKTIF;
 

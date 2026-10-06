@@ -20,6 +20,8 @@
           <option value="kopi">Kopi</option>
           <option value="non-kopi">Non-Kopi</option>
           <option value="kudapan">Kudapan</option>
+          <option value="makanan">Makanan</option>
+          <option value="tambahan">Tambahan</option>
         </select>
       </div>
       <div class="field">
@@ -50,11 +52,7 @@
       <tr><th>Foto</th><th>Nama</th><th>Kategori</th><th>Harga</th><th>Aksi</th></tr>
     </thead>
     <tbody>
-      @forelse(($menus ?? [
-          ['nama' => 'Serenata Signature', 'kategori' => 'Kopi', 'harga' => 28000],
-          ['nama' => 'Matcha Latte', 'kategori' => 'Non-Kopi', 'harga' => 26000],
-          ['nama' => 'Butter Croissant', 'kategori' => 'Kudapan', 'harga' => 22000],
-      ]) as $menu)
+      @forelse(($menus ?? []) as $menu)
         <tr>
           <td>
             @if(!empty($menu['foto']))
@@ -68,10 +66,10 @@
           <td>Rp {{ number_format($menu['harga'], 0, ',', '.') }}</td>
           <td class="table-actions">
             <a href="{{ route('admin.menu.edit', $menu['id']) }}" class="btn btn-outline btn-sm">Edit</a>
-            <form method="POST" action="{{ route('admin.menu.destroy', $menu['id']) }}" onsubmit="return confirm('Yakin hapus menu ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger-ghost btn-sm">Hapus</button>
+            <form method="POST" action="{{ route('admin.menu.destroy', $menu['id']) }}" class="confirm-delete" data-message="Yakin hapus menu {{ $menu['nama'] }}?">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-danger-ghost btn-sm">Hapus</button>
             </form>
           </td>
         </tr>

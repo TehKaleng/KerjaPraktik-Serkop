@@ -21,6 +21,8 @@
           <option value="kopi" @selected($menu->kategori === 'kopi')>Kopi</option>
           <option value="non-kopi" @selected($menu->kategori === 'non-kopi')>Non-Kopi</option>
           <option value="kudapan" @selected($menu->kategori === 'kudapan')>Kudapan</option>
+          <option value="makanan" @selected($menu->kategori === 'makanan')>Makanan</option>
+          <option value="tambahan" @selected($menu->kategori === 'tambahan')>Tambahan</option>
         </select>
       </div>
       <div class="field">

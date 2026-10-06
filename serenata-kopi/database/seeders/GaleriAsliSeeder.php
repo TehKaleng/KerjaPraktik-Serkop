@@ -18,6 +18,10 @@ class GaleriAsliSeeder extends Seeder
      *
      * Saat seeder dijalankan, file disalin ke penyimpanan (disk "public", folder galeri/) dan dicatat
      * di tabel galeri, sama seperti kalau diunggah lewat panel admin (menu Galeri).
+     *
+     * Versi utuh: foto di grid dipotong sesuai bentuk kotaknya. Kalau ada file dengan nama sama di
+     * database/seeders/foto/galeri/penuh/, file itu (foto tanpa dipotong) ikut disalin ke galeri/penuh/
+     * dan dipakai di tampilan besar "Lihat semua foto".
      * Menjalankannya berulang aman: foto yang sudah tercatat tidak digandakan, hanya urutannya
      * dirapikan lagi sesuai daftar ini. Kalau kamu menghapus salah satu foto ini lewat admin lalu
      * menjalankan seeder lagi, foto itu akan muncul kembali.
@@ -50,6 +54,12 @@ class GaleriAsliSeeder extends Seeder
                 Storage::disk('public')->put($tujuan, File::get($sumber));
 
                 $foto = new GalleryPhoto(['foto' => $tujuan, 'keterangan' => $keterangan]);
+            }
+
+            // Versi utuh (tanpa dipotong) untuk tampilan besar, kalau tersedia
+            $sumberPenuh = database_path('seeders/foto/galeri/penuh/' . $namaFile);
+            if (File::exists($sumberPenuh)) {
+                Storage::disk('public')->put('galeri/penuh/' . $namaFile, File::get($sumberPenuh));
             }
 
             // Menjaga urutan tampil: yang pertama di daftar paling baru (kotak besar)

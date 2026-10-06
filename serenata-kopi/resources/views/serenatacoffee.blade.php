@@ -449,19 +449,29 @@
 
   .lightbox{
     position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-    background:rgba(8,12,28,0.92);padding:24px 72px;
+    background:#080c1c;padding:24px 72px;overflow:hidden;
+  }
+  .lb-fon{                                        /* latar: foto yang sama, diburamkan, mengisi seluruh layar */
+    position:absolute;inset:-40px;pointer-events:none;
+    background-size:cover;background-position:center;
+    filter:blur(36px) brightness(0.38) saturate(1.1);
   }
   .lightbox[hidden]{display:none;}
   body.lb-open{overflow:hidden;}
-  .lb-isi{margin:0;max-width:100%;display:flex;flex-direction:column;align-items:center;gap:12px;}
-  .lb-isi img{
-    display:block;max-width:min(92vw,1100px);max-height:76vh;width:auto;height:auto;
-    object-fit:contain;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  /* Bingkai berukuran tetap: semua foto (tegak maupun lebar) tampil seragam dan utuh, tidak terpotong */
+  .lb-isi{
+    position:relative;z-index:1;margin:0;width:min(92vw,1100px);
+    height:calc(100vh - 150px);height:calc(100dvh - 150px);
+    display:flex;flex-direction:column;align-items:center;gap:12px;
   }
-  .lb-isi figcaption{display:flex;gap:16px;align-items:center;justify-content:center;color:var(--text-light);font-size:14px;text-align:center;}
+  .lb-isi img{
+    flex:1 1 0;min-height:0;width:100%;display:block;object-fit:contain;
+    filter:drop-shadow(0 12px 30px rgba(0,0,0,0.45));
+  }
+  .lb-isi figcaption{flex:0 0 auto;display:flex;gap:16px;align-items:center;justify-content:center;color:var(--text-light);font-size:14px;text-align:center;}
   #lbNo{color:var(--text-muted);font-size:13px;}
   .lb-tutup, .lb-nav{
-    position:absolute;display:flex;align-items:center;justify-content:center;
+    position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;
     width:46px;height:46px;border-radius:50%;border:1px solid rgba(245,241,234,0.3);
     background:rgba(36,58,107,0.85);color:var(--text-light);font-family:inherit;cursor:pointer;
     transition:background .2s ease,border-color .2s ease;
@@ -475,12 +485,11 @@
   @media (max-width:820px){
     #suasana .ambience-grid .b1{grid-column:1 / -1;height:240px;}   /* foto besar selebar layar, sisanya berpasangan */
     .gal-aksi{justify-content:center;}
-    .lightbox{padding:70px 12px 24px;}
+    .lightbox{padding:60px 10px 84px;}
+    .lb-isi{width:100%;height:calc(100vh - 144px);height:calc(100dvh - 144px);}
     .lb-nav{top:auto;bottom:18px;transform:none;}
     .lb-prev{left:calc(50% - 60px);}
     .lb-next{right:calc(50% - 60px);}
-    .lb-isi img{max-height:64vh;}
-    .lb-isi figcaption{padding-bottom:64px;}
   }
 </style>
 </head>
@@ -813,10 +822,17 @@
 
 {{-- Tampilan besar galeri Suasana --}}
 @php
-    $dataGaleri = $fotos->map(fn ($f) => ['src' => asset('storage/' . $f->foto), 'ket' => $f->keterangan])->values();
+    // Tampilan besar memakai versi utuh (galeri/penuh/...) kalau ada; kalau tidak, foto yang sama dengan di grid
+    $dataGaleri = $fotos->map(function ($f) {
+        $penuh = 'galeri/penuh/' . basename($f->foto);
+        $berkas = \Illuminate\Support\Facades\Storage::disk('public')->exists($penuh) ? $penuh : $f->foto;
+
+        return ['src' => asset('storage/' . $berkas), 'ket' => $f->keterangan];
+    })->values();
 @endphp
 <script type="application/json" id="data-galeri">@json($dataGaleri)</script>
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galeri foto suasana Serenata" hidden>
+  <div class="lb-fon" id="lbFon" aria-hidden="true"></div>
   <button type="button" class="lb-tutup" aria-label="Tutup galeri">&times;</button>
   <button type="button" class="lb-nav lb-prev" aria-label="Foto sebelumnya">&lsaquo;</button>
   <figure class="lb-isi">
@@ -1146,6 +1162,7 @@
   var gambar = document.getElementById('lbFoto');
   var ket = document.getElementById('lbKet');
   var nomor = document.getElementById('lbNo');
+  var fon = document.getElementById('lbFon');
   var tutup = kotak.querySelector('.lb-tutup');
   var sebelum = kotak.querySelector('.lb-prev');
   var sesudah = kotak.querySelector('.lb-next');
@@ -1159,6 +1176,7 @@
     gambar.alt = f.ket || 'Foto suasana Serenata';
     ket.textContent = f.ket || '';
     nomor.textContent = (indeks + 1) + ' / ' + foto.length;
+    if (fon) fon.style.backgroundImage = 'url("' + f.src.replace(/"/g, '%22') + '")';
     // muat foto tetangga lebih dulu supaya perpindahan terasa cepat
     [indeks + 1, indeks - 1].forEach(function (j) {
       var p = new Image();
@@ -1178,6 +1196,7 @@
     kotak.hidden = true;
     document.body.classList.remove('lb-open');
     gambar.removeAttribute('src');
+    if (fon) fon.style.backgroundImage = '';
     if (pemicu && pemicu.focus) pemicu.focus();
   }
 

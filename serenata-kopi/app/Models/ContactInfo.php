@@ -23,9 +23,11 @@ class ContactInfo extends Model
     public static function current(): self
     {
         return static::firstOrCreate([], [
-            'alamat'   => 'Jl. Melati No. 12, Palembang, Sumatera Selatan',
-            'whatsapp' => '628123456789',
-            'email'    => 'hello@serenatakopi.id',
+            'alamat'    => 'Jl. Melati No. 12, Palembang, Sumatera Selatan',
+            'jam_buka'  => '08:00',
+            'jam_tutup' => '23:00',
+            'whatsapp'  => '628123456789',
+            'email'     => 'hello@serenatakopi.id',
         ]);
     }
 }

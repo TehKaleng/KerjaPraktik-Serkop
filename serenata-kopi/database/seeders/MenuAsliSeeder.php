@@ -7,77 +7,92 @@ use Illuminate\Database\Seeder;
 
 class MenuAsliSeeder extends Seeder
 {
+    /**
+     * Daftar menu asli Serenata Kopi & Space (dari buku menu di kafe).
+     * Format: [nama, kategori, harga dalam ribuan rupiah, deskripsi]  ->  27 berarti Rp 27.000
+     * Deskripsi null = belum diisi (diisi lewat panel admin atau ditambahkan di sini nanti).
+     *
+     * Aman dijalankan berulang: menu dicari berdasarkan nama. Kalau sudah ada,
+     * kategori dan harganya disamakan; foto tidak diubah, dan deskripsi hanya diisi kalau masih
+     * kosong (deskripsi yang kamu tulis sendiri di panel admin tidak akan tertimpa).
+     * Menu yang kamu tambah sendiri lewat panel admin tidak tersentuh.
+     */
     private const DAFTAR = [
         // Kopi - Signature Coffee
-        ['The Next Level V1 (Cookies)', 'kopi', 27],
-        ['The Next Level V2 (Keju)', 'kopi', 27],
-        ['Peanut Butter', 'kopi', 27],
-        ['Kopok', 'kopi', 28],
-        ['Mareso', 'kopi', 26],
-        ['Matcha Presso', 'kopi', 28],
-        ['Banoffee', 'kopi', 28],
+        ['The Next Level V1 (Cookies)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa cookies.'],
+        ['The Next Level V2 (Keju)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa keju.'],
+        ['Peanut Butter', 'kopi', 27, 'Kopi signature dengan cita rasa selai kacang (peanut butter).'],
+        ['Kopok', 'kopi', 28, null],
+        ['Mareso', 'kopi', 26, null],
+        ['Matcha Presso', 'kopi', 28, 'Perpaduan espresso dan matcha dalam satu gelas.'],
+        ['Banoffee', 'kopi', 28, 'Kopi bercita rasa banoffee: perpaduan pisang dan karamel toffee.'],
         // Kopi - Espresso Based
-        ['Espresso', 'kopi', 23],
-        ['Americano', 'kopi', 25],
-        ['Coffee Latte', 'kopi', 26],
-        ['Mocha Latte', 'kopi', 27],
-        ['Cappucino', 'kopi', 26],
+        ['Espresso', 'kopi', 23, 'Kopi pekat murni dari mesin espresso, tanpa tambahan.'],
+        ['Americano', 'kopi', 25, 'Espresso yang dicampur air, rasa kopinya ringan dan bersih.'],
+        ['Coffee Latte', 'kopi', 26, 'Espresso dengan susu yang lembut.'],
+        ['Mocha Latte', 'kopi', 27, 'Espresso, susu, dan cokelat dalam satu gelas.'],
+        ['Cappucino', 'kopi', 26, 'Espresso dengan susu dan buih susu yang tebal.'],
         // Kopi - Manual Brew
-        ['V60', 'kopi', 28],
-        ['Japanese', 'kopi', 28],
-        ['Vietnam Drip', 'kopi', 25],
-        ['Tubruk', 'kopi', 20],
-        ['Sanger', 'kopi', 25],
+        ['V60', 'kopi', 28, 'Kopi seduh manual dengan teknik V60, rasanya bersih dan aromanya terasa.'],
+        ['Japanese', 'kopi', 28, 'Kopi seduh manual bergaya Jepang.'],
+        ['Vietnam Drip', 'kopi', 25, 'Kopi tetes ala Vietnam dengan saringan khas, rasanya pekat.'],
+        ['Tubruk', 'kopi', 20, 'Kopi tubruk khas Indonesia: bubuk kopi diseduh langsung dengan air panas.'],
+        ['Sanger', 'kopi', 25, 'Kopi susu khas Aceh.'],
         // Non-Kopi - Signature Non Coffee
-        ['Rose Pink', 'non-kopi', 26],
-        ['Yapok', 'non-kopi', 25],
-        ['Chocomaro', 'non-kopi', 28],
+        ['Rose Pink', 'non-kopi', 26, null],
+        ['Yapok', 'non-kopi', 25, null],
+        ['Chocomaro', 'non-kopi', 28, null],
         // Non-Kopi - Non Coffee
-        ['Avocado', 'non-kopi', 25],
-        ['Banana', 'non-kopi', 25],
-        ['Cookies & Cream', 'non-kopi', 26],
-        ['Dark Chocolate', 'non-kopi', 27],
-        ['Mava Latte', 'non-kopi', 27],
-        ['Redvelvet', 'non-kopi', 25],
-        ['Taro Latte', 'non-kopi', 25],
-        ['Vanilla', 'non-kopi', 25],
+        ['Avocado', 'non-kopi', 25, 'Minuman alpukat yang creamy dan segar.'],
+        ['Banana', 'non-kopi', 25, 'Minuman pisang yang creamy.'],
+        ['Cookies & Cream', 'non-kopi', 26, 'Minuman susu bercita rasa cookies and cream, manis dan creamy.'],
+        ['Dark Chocolate', 'non-kopi', 27, 'Minuman cokelat pekat dengan rasa cokelat yang kuat.'],
+        ['Mava Latte', 'non-kopi', 27, null],
+        ['Redvelvet', 'non-kopi', 25, 'Minuman red velvet yang manis dan creamy.'],
+        ['Taro Latte', 'non-kopi', 25, 'Minuman susu rasa talas (taro) yang manis dan lembut.'],
+        ['Vanilla', 'non-kopi', 25, 'Minuman susu rasa vanila yang lembut.'],
         // Non-Kopi - Tropical
-        ['Yama Booster', 'non-kopi', 25],
-        ['Passion Tropical', 'non-kopi', 23],
-        ['Celi Mojito', 'non-kopi', 23],
-        ['Pinkberry Mint', 'non-kopi', 23],
-        ['Yakult Lime', 'non-kopi', 25],
+        ['Yama Booster', 'non-kopi', 25, null],
+        ['Passion Tropical', 'non-kopi', 23, 'Minuman segar rasa markisa (passion fruit) bergaya tropis.'],
+        ['Celi Mojito', 'non-kopi', 23, null],
+        ['Pinkberry Mint', 'non-kopi', 23, 'Minuman segar perpaduan berry dan mint.'],
+        ['Yakult Lime', 'non-kopi', 25, 'Minuman segar Yakult dengan perasan jeruk nipis (lime).'],
         // Kudapan - Salty Snack
-        ['Beef Wrap with Fries', 'kudapan', 30],
-        ['Bukan Otak-Otak', 'kudapan', 24],
-        ['Cireng', 'kudapan', 23],
-        ['Ekado Roll', 'kudapan', 26],
-        ['French Fries', 'kudapan', 24],
-        ['Mix Platter', 'kudapan', 28],
-        ['Tofu Meatball', 'kudapan', 28],
+        ['Beef Wrap with Fries', 'kudapan', 30, 'Wrap isi daging sapi, disajikan dengan kentang goreng dan saus.'],
+        ['Bukan Otak-Otak', 'kudapan', 24, null],
+        ['Cireng', 'kudapan', 23, 'Aci goreng khas Sunda, renyah di luar dan kenyal di dalam.'],
+        ['Ekado Roll', 'kudapan', 26, null],
+        ['French Fries', 'kudapan', 24, 'Kentang goreng yang renyah.'],
+        ['Mix Platter', 'kudapan', 28, null],
+        ['Tofu Meatball', 'kudapan', 28, null],
         // Kudapan - Sweet Snack
-        ['Choco Banana', 'kudapan', 25],
-        ['Chocolate Mantou', 'kudapan', 22],
+        ['Choco Banana', 'kudapan', 25, 'Pisang dengan cokelat leleh dalam balutan renyah, ditaburi gula halus.'],
+        ['Chocolate Mantou', 'kudapan', 22, 'Mantou goreng bertabur gula halus, disajikan dengan saus cocolan.'],
         // Makanan - Main Course
-        ['Ayam Geprek Serenata', 'makanan', 32],
-        ['Fire Chicken with Cheese', 'makanan', 32],
-        ['Chicken Chop with Blackpepper Sauce', 'makanan', 32],
-        ['Spaghetti Bolognese', 'makanan', 32],
-        ['Spaghetti Carbonara', 'makanan', 32],
+        ['Ayam Geprek Serenata', 'makanan', 32, 'Ayam goreng geprek dengan sambal, disajikan bersama nasi dan timun.'],
+        ['Fire Chicken with Cheese', 'makanan', 32, 'Ayam berbumbu pedas dengan saus keju, disajikan bersama nasi dan timun.'],
+        ['Chicken Chop with Blackpepper Sauce', 'makanan', 32, 'Chicken chop dengan saus lada hitam, disajikan bersama nasi dan timun.'],
+        ['Spaghetti Bolognese', 'makanan', 32, 'Spageti dengan saus bolognese yang gurih.'],
+        ['Spaghetti Carbonara', 'makanan', 32, 'Spageti ala carbonara yang gurih.'],
         // Tambahan - Add-ons Topping
-        ['Cream Cheese', 'tambahan', 5],
-        ['Oreo', 'tambahan', 3],
-        ['Regal', 'tambahan', 3],
-        ['Extra Shot Espresso', 'tambahan', 5],
-        ['Mineral', 'tambahan', 8],
+        ['Cream Cheese', 'tambahan', 5, 'Tambahan topping cream cheese untuk minumanmu.'],
+        ['Oreo', 'tambahan', 3, 'Tambahan topping Oreo untuk minumanmu.'],
+        ['Regal', 'tambahan', 3, 'Tambahan topping biskuit Regal untuk minumanmu.'],
+        ['Extra Shot Espresso', 'tambahan', 5, 'Tambahan satu shot espresso untuk kopi yang lebih kuat.'],
+        ['Mineral', 'tambahan', 8, 'Air mineral.'],
     ];
 
     public function run(): void
     {
-        foreach (self::DAFTAR as [$nama, $kategori, $ribu]) {
+        foreach (self::DAFTAR as [$nama, $kategori, $ribu, $deskripsi]) {
             $menu = Menu::firstOrNew(['nama' => $nama]);
             $menu->kategori = $kategori;
             $menu->harga    = $ribu * 1000;
+
+            if ($deskripsi !== null && blank($menu->deskripsi)) {
+                $menu->deskripsi = $deskripsi;
+            }
+
             $menu->save();
         }
     }

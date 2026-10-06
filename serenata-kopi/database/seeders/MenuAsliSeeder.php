@@ -7,14 +7,6 @@ use Illuminate\Database\Seeder;
 
 class MenuAsliSeeder extends Seeder
 {
-    /**
-     * Daftar menu asli Serenata Kopi & Space (dari buku menu di kafe).
-     * Format: [nama, kategori, harga dalam ribuan rupiah]  ->  27 berarti Rp 27.000
-     *
-     * Aman dijalankan berulang: menu dicari berdasarkan nama. Kalau sudah ada,
-     * hanya kategori dan harganya yang disamakan; foto dan deskripsi tidak diubah.
-     * Menu yang kamu tambah sendiri lewat panel admin tidak tersentuh.
-     */
     private const DAFTAR = [
         // Kopi - Signature Coffee
         ['The Next Level V1 (Cookies)', 'kopi', 27],
@@ -28,8 +20,8 @@ class MenuAsliSeeder extends Seeder
         ['Espresso', 'kopi', 23],
         ['Americano', 'kopi', 25],
         ['Coffee Latte', 'kopi', 26],
-        ['Mocha Latte', 'kopi', 29],
-        ['Cappucino', 'kopi', 25],
+        ['Mocha Latte', 'kopi', 27],
+        ['Cappucino', 'kopi', 26],
         // Kopi - Manual Brew
         ['V60', 'kopi', 28],
         ['Japanese', 'kopi', 28],

@@ -7,23 +7,14 @@ use Illuminate\Database\Seeder;
 
 class MenuAsliSeeder extends Seeder
 {
-    /**
-     * Daftar menu asli Serenata Kopi & Space (dari buku menu di kafe).
-     * Format: [nama, kategori, harga dalam ribuan rupiah, deskripsi]  ->  27 berarti Rp 27.000
-     * Deskripsi null = belum diisi (diisi lewat panel admin atau ditambahkan di sini nanti).
-     *
-     * Aman dijalankan berulang: menu dicari berdasarkan nama. Kalau sudah ada,
-     * kategori dan harganya disamakan; foto tidak diubah, dan deskripsi hanya diisi kalau masih
-     * kosong (deskripsi yang kamu tulis sendiri di panel admin tidak akan tertimpa).
-     * Menu yang kamu tambah sendiri lewat panel admin tidak tersentuh.
-     */
+
     private const DAFTAR = [
         // Kopi - Signature Coffee
         ['The Next Level V1 (Cookies)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa cookies.'],
         ['The Next Level V2 (Keju)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa keju.'],
         ['Peanut Butter', 'kopi', 27, 'Kopi signature dengan cita rasa selai kacang (peanut butter).'],
-        ['Kopok', 'kopi', 28, null],
-        ['Mareso', 'kopi', 26, null],
+        ['Kopok', 'kopi', 28, 'Kopi dan alpukat dalam satu gelas.'],
+        ['Mareso', 'kopi', 26, 'Perpaduan markisa dan espresso.'],
         ['Matcha Presso', 'kopi', 28, 'Perpaduan espresso dan matcha dalam satu gelas.'],
         ['Banoffee', 'kopi', 28, 'Kopi bercita rasa banoffee: perpaduan pisang dan karamel toffee.'],
         // Kopi - Espresso Based
@@ -39,32 +30,32 @@ class MenuAsliSeeder extends Seeder
         ['Tubruk', 'kopi', 20, 'Kopi tubruk khas Indonesia: bubuk kopi diseduh langsung dengan air panas.'],
         ['Sanger', 'kopi', 25, 'Kopi susu khas Aceh.'],
         // Non-Kopi - Signature Non Coffee
-        ['Rose Pink', 'non-kopi', 26, null],
-        ['Yapok', 'non-kopi', 25, null],
-        ['Chocomaro', 'non-kopi', 28, null],
+        ['Rose Pink', 'non-kopi', 26, 'Minuman segar Yakult dan susu dengan sirup raspberry.'],
+        ['Yapok', 'non-kopi', 25, 'Perpaduan Yakult dan alpukat.'],
+        ['Chocomaro', 'non-kopi', 28, 'Minuman cokelat dan matcha dengan topping Oreo.'],
         // Non-Kopi - Non Coffee
         ['Avocado', 'non-kopi', 25, 'Minuman alpukat yang creamy dan segar.'],
         ['Banana', 'non-kopi', 25, 'Minuman pisang yang creamy.'],
         ['Cookies & Cream', 'non-kopi', 26, 'Minuman susu bercita rasa cookies and cream, manis dan creamy.'],
         ['Dark Chocolate', 'non-kopi', 27, 'Minuman cokelat pekat dengan rasa cokelat yang kuat.'],
-        ['Mava Latte', 'non-kopi', 27, null],
+        ['Mava Latte', 'non-kopi', 27, 'Perpaduan matcha dan vanila.'],
         ['Redvelvet', 'non-kopi', 25, 'Minuman red velvet yang manis dan creamy.'],
         ['Taro Latte', 'non-kopi', 25, 'Minuman susu rasa talas (taro) yang manis dan lembut.'],
         ['Vanilla', 'non-kopi', 25, 'Minuman susu rasa vanila yang lembut.'],
         // Non-Kopi - Tropical
-        ['Yama Booster', 'non-kopi', 25, null],
+        ['Yama Booster', 'non-kopi', 25, 'Minuman segar Yakult dengan markisa.'],
         ['Passion Tropical', 'non-kopi', 23, 'Minuman segar rasa markisa (passion fruit) bergaya tropis.'],
-        ['Celi Mojito', 'non-kopi', 23, null],
+        ['Celi Mojito', 'non-kopi', 23, 'Minuman segar leci dan Sprite.'],
         ['Pinkberry Mint', 'non-kopi', 23, 'Minuman segar perpaduan berry dan mint.'],
         ['Yakult Lime', 'non-kopi', 25, 'Minuman segar Yakult dengan perasan jeruk nipis (lime).'],
         // Kudapan - Salty Snack
         ['Beef Wrap with Fries', 'kudapan', 30, 'Wrap isi daging sapi, disajikan dengan kentang goreng dan saus.'],
-        ['Bukan Otak-Otak', 'kudapan', 24, null],
+        ['Bukan Otak-Otak', 'kudapan', 24, 'Kudapan bakso ikan.'],
         ['Cireng', 'kudapan', 23, 'Aci goreng khas Sunda, renyah di luar dan kenyal di dalam.'],
-        ['Ekado Roll', 'kudapan', 26, null],
+        ['Ekado Roll', 'kudapan', 26, 'Siomay ala Jepang yang dibalut kulit tahu, lalu digoreng.'],
         ['French Fries', 'kudapan', 24, 'Kentang goreng yang renyah.'],
-        ['Mix Platter', 'kudapan', 28, null],
-        ['Tofu Meatball', 'kudapan', 28, null],
+        ['Mix Platter', 'kudapan', 28, 'Hidangan campur berisi kentang, sosis, dan bakso.'],
+        ['Tofu Meatball', 'kudapan', 28, 'Tahu bakso goreng.'],
         // Kudapan - Sweet Snack
         ['Choco Banana', 'kudapan', 25, 'Pisang dengan cokelat leleh dalam balutan renyah, ditaburi gula halus.'],
         ['Chocolate Mantou', 'kudapan', 22, 'Mantou goreng bertabur gula halus, disajikan dengan saus cocolan.'],

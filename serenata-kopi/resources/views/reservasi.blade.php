@@ -73,6 +73,10 @@
           <div>
             <label>Jam</label>
             <input type="time" name="jam" id="input-jam" value="{{ old('jam') }}" required>
+            <small id="jam-hint" class="rsv-jam-hint">
+              Senin - Jumat: {{ str_replace(':', '.', $jamOperasional['weekday']['min']) }} - {{ str_replace(':', '.', $jamOperasional['weekday']['max']) }}
+              &middot; Sabtu - Minggu: {{ str_replace(':', '.', $jamOperasional['weekend']['min']) }} - {{ str_replace(':', '.', $jamOperasional['weekend']['max']) }}
+            </small>
           </div>
           <div>
             <label>Jumlah Orang</label>
@@ -353,6 +357,8 @@
   .rsv-akun-aksi{display:flex;gap:10px;}
   .rsv-akun-aksi a{padding:9px 22px;font-size:14px;}
   .rsv-akun-masuk{display:block;font-size:14px;color:var(--text-muted);}
+  .rsv-jam-hint{display:block;margin-top:6px;font-size:12px;line-height:1.5;color:var(--text-muted);}
+  .rsv-jam-hint.salah{color:#E8562A;font-weight:600;}
 </style>
 
 <script>
@@ -365,8 +371,53 @@ document.addEventListener('DOMContentLoaded', function () {
   const mejaGrid = document.getElementById('meja-grid');
   const mejaHint = document.getElementById('meja-hint');
   const mejaIdInput = document.getElementById('input-meja-id');
+  const jamHint = document.getElementById('jam-hint');
+
+  // Jam operasional dari server: weekday (Senin-Jumat) & weekend (Sabtu-Minggu).
+  // min = jam buka, max = jam reservasi terakhir (sebelum tutup).
+  const JAM_OPERASIONAL = @json($jamOperasional);
+  const hintAwal = jamHint.innerHTML;
+
+  function rentangUntukTanggal(tgl) {
+    const hari = new Date(tgl + 'T00:00:00').getDay(); // 0 = Minggu, 6 = Sabtu
+    const weekend = (hari === 0 || hari === 6);
+    return { ...JAM_OPERASIONAL[weekend ? 'weekend' : 'weekday'], label: weekend ? 'Sabtu - Minggu' : 'Senin - Jumat' };
+  }
+
+  const titik = (j) => j.replace(':', '.');
+
+  // Atur batas jam sesuai hari yang dipilih, dan beri tahu kalau jamnya di luar jam operasional
+  function aturBatasJam() {
+    if (!tglInput.value) {
+      jamInput.removeAttribute('min');
+      jamInput.removeAttribute('max');
+      jamHint.innerHTML = hintAwal;
+      jamHint.classList.remove('salah');
+      return true;
+    }
+    const r = rentangUntukTanggal(tglInput.value);
+    jamInput.min = r.min;
+    jamInput.max = r.max;
+
+    if (jamInput.value && (jamInput.value < r.min || jamInput.value > r.max)) {
+      jamHint.textContent = 'Untuk ' + r.label + ', pilih jam ' + titik(r.min) + ' - ' + titik(r.max) + '.';
+      jamHint.classList.add('salah');
+      return false;
+    }
+    jamHint.textContent = r.label + ': reservasi jam ' + titik(r.min) + ' - ' + titik(r.max)
+      + ' (kafe buka ' + titik(r.buka) + ' - ' + titik(r.tutup) + ').';
+    jamHint.classList.remove('salah');
+    return true;
+  }
 
   function muatMeja() {
+    const jamValid = aturBatasJam();
+    if (!jamValid) {
+      mejaHint.textContent = 'Jam di luar jam operasional. Ubah jam dulu untuk melihat meja.';
+      mejaGrid.innerHTML = '';
+      mejaIdInput.value = '';
+      return;
+    }
     if (!tglInput.value || !jamInput.value) {
       mejaHint.textContent = 'Isi tanggal & jam dulu di atas untuk melihat meja yang kosong.';
       mejaGrid.innerHTML = '';
@@ -407,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   tglInput.addEventListener('change', muatMeja);
   jamInput.addEventListener('change', muatMeja);
+  aturBatasJam(); // kalau form dibuka ulang setelah error validasi (old input), batasnya langsung terpasang
 
   function renderRingkasan() {
     const list = document.getElementById('ringkasan-list');

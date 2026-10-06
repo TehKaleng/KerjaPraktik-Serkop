@@ -7,6 +7,7 @@ use App\Models\Meja;
 use App\Models\Menu;
 use App\Models\Reservation;
 use App\Notifications\ReservasiBerhasil;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -22,6 +23,12 @@ class ReservationController extends Controller
      */
     private const QRIS_AKTIF = false;
 
+    /**
+     * Reservasi terakhir yang diterima: sekian menit sebelum kafe tutup.
+     * Contoh: tutup 23.00 dan batas 60 menit -> jam reservasi paling malam 22.00.
+     */
+    private const MENIT_SEBELUM_TUTUP = 60;
+
     public function create()
     {
         // Kelompok menu diurutkan: kopi, non-kopi, kudapan, makanan, tambahan (di dalam kelompok: abjad)
@@ -31,7 +38,14 @@ class ReservationController extends Controller
 
         $qrisAktif = self::QRIS_AKTIF;
 
-        return view('reservasi', compact('menusByKategori', 'qrisAktif'));
+        // Dipakai JavaScript di form untuk membatasi pilihan jam sesuai hari yang dipilih
+        $kontak = ContactInfo::current();
+        $jamOperasional = [
+            'weekday' => $this->rentangReservasi($kontak->jam_buka, $kontak->jam_tutup),
+            'weekend' => $this->rentangReservasi($kontak->jam_buka_weekend, $kontak->jam_tutup_weekend),
+        ];
+
+        return view('reservasi', compact('menusByKategori', 'qrisAktif', 'jamOperasional'));
     }
 
     /**
@@ -93,7 +107,7 @@ class ReservationController extends Controller
             'nama'         => 'required|string|max:255',
             'whatsapp'     => ['required', 'string', 'regex:/^08\d{8,12}$/'],
             'tanggal'      => 'required|date|after_or_equal:today',
-            'jam'          => 'required',
+            'jam'          => 'required|date_format:H:i',
             'jumlah_orang' => 'required|integer|min:1',
             'meja_id'      => 'required|exists:meja,id',
             'catatan'      => 'nullable|string',
@@ -103,8 +117,15 @@ class ReservationController extends Controller
             'qty'          => 'required|array',
             'qty.*'        => 'integer|min:1',
         ], [
-            'whatsapp.regex' => 'Nomor WhatsApp tidak valid. Gunakan nomor HP Indonesia, contoh: 08123456789.',
+            'whatsapp.regex'  => 'Nomor WhatsApp tidak valid. Gunakan nomor HP Indonesia, contoh: 08123456789.',
+            'jam.date_format' => 'Format jam tidak valid. Pilih jam lewat kolom jam, contoh 19:00.',
         ]);
+
+        // Jam reservasi harus di dalam jam operasional hari itu (weekday / weekend beda jam tutup)
+        $pesanJam = $this->cekJamReservasi($validated['tanggal'], $validated['jam']);
+        if ($pesanJam !== null) {
+            return back()->withErrors(['jam' => $pesanJam])->withInput();
+        }
 
         // Batas reservasi yang masih menunggu konfirmasi kafe. Tamu dihitung per nomor WhatsApp,
         // pemesan yang login dihitung per akun dan diberi batas lebih longgar.
@@ -228,6 +249,47 @@ class ReservationController extends Controller
         $waUrl = "https://wa.me/{$nomorCafe}?text=" . urlencode($pesan);
 
         return redirect($waUrl);
+    }
+
+    /**
+     * Rentang jam yang boleh dipilih untuk reservasi: dari jam buka sampai
+     * (jam tutup - MENIT_SEBELUM_TUTUP).
+     *
+     * @return array{min: string, max: string, buka: string, tutup: string}
+     */
+    private function rentangReservasi(string $buka, string $tutup): array
+    {
+        $buka  = substr($buka, 0, 5);
+        $tutup = substr($tutup, 0, 5);
+        $max   = Carbon::createFromFormat('H:i', $tutup)->subMinutes(self::MENIT_SEBELUM_TUTUP)->format('H:i');
+
+        return ['min' => $buka, 'max' => $max, 'buka' => $buka, 'tutup' => $tutup];
+    }
+
+    /**
+     * Mengecek jam reservasi terhadap jam operasional hari tersebut.
+     * Mengembalikan pesan error, atau null kalau jamnya boleh.
+     */
+    private function cekJamReservasi(string $tanggal, string $jam): ?string
+    {
+        $kontak  = ContactInfo::current();
+        $jamHari = $kontak->jamPada($tanggal);
+        $rentang = $this->rentangReservasi($jamHari['buka'], $jamHari['tutup']);
+        $hari    = ContactInfo::adalahWeekend($tanggal) ? 'Sabtu - Minggu' : 'Senin - Jumat';
+
+        if ($jam < $rentang['min'] || $jam > $rentang['max']) {
+            return "Jam reservasi untuk {$hari} antara "
+                . ContactInfo::formatJam($rentang['min']) . ' dan ' . ContactInfo::formatJam($rentang['max'])
+                . ' (kafe buka ' . ContactInfo::formatJam($rentang['buka'])
+                . ' - ' . ContactInfo::formatJam($rentang['tutup']) . ').';
+        }
+
+        // Reservasi untuk hari ini tidak boleh memilih jam yang sudah lewat
+        if (Carbon::parse($tanggal)->isToday() && $jam <= now()->format('H:i')) {
+            return 'Jam yang dipilih sudah lewat. Pilih jam yang lebih malam.';
+        }
+
+        return null;
     }
 
     /** Menyeragamkan nomor WhatsApp: hanya angka, dan awalan 62 diubah jadi 0 (62812... -> 0812...). */

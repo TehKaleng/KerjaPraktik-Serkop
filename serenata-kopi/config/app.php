@@ -65,7 +65,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Palembang memakai WIB. Penting untuk validasi tanggal/jam reservasi ("hari ini", jam sudah lewat).
+    'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
 
     /*
     |--------------------------------------------------------------------------

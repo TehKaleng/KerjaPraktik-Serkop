@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Testimonial;
 use App\Models\ContactInfo;
 use Illuminate\Database\Seeder;
 
@@ -13,15 +12,8 @@ class MenuSeeder extends Seeder
         // Menu asli kafe (lihat MenuAsliSeeder)
         $this->call(MenuAsliSeeder::class);
 
-        // Testimoni contoh
-        Testimonial::firstOrCreate(
-            ['nama' => 'Rani A.'],
-            ['peran' => 'Freelancer', 'rating' => 5, 'isi' => 'Tempat favorit buat kerja remote, wifi kencang dan kopinya konsisten enak.', 'tampil' => true]
-        );
-        Testimonial::firstOrCreate(
-            ['nama' => 'Fajar S.'],
-            ['peran' => 'Pemilik Usaha', 'rating' => 5, 'isi' => 'Suasananya tenang banget, cocok buat meeting santai sama klien.', 'tampil' => true]
-        );
+        // Testimoni: ulasan asli pelanggan dari Google Maps (lihat TestimoniAsliSeeder)
+        $this->call(TestimoniAsliSeeder::class);
 
         // Info kontak default (cuma 1 baris)
         ContactInfo::current();

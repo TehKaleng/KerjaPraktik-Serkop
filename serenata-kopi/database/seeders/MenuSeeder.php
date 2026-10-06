@@ -15,6 +15,9 @@ class MenuSeeder extends Seeder
         // Testimoni: ulasan asli pelanggan dari Google Maps (lihat TestimoniAsliSeeder)
         $this->call(TestimoniAsliSeeder::class);
 
+        // Foto suasana kafe untuk bagian Suasana (lihat GaleriAsliSeeder)
+        $this->call(GaleriAsliSeeder::class);
+
         // Info kontak default (cuma 1 baris)
         ContactInfo::current();
     }

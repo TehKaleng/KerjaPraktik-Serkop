@@ -79,6 +79,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/meja/{meja}', [MejaController::class, 'destroy'])->name('meja.destroy');
 });
 
-Route::get('/uji-500', fn () => abort(500));
-
 require __DIR__.'/auth.php';

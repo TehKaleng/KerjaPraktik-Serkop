@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Kalau mendaftar dari halaman reservasi, kembali ke sana; selain itu ke dashboard
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

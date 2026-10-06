@@ -24,7 +24,7 @@
       Setelah bayar, klik tombol di bawah untuk kirim bukti & detail reservasi ke WhatsApp cafe.
     </p>
 
-    <form method="POST" action="{{ route('reservasi.selesai', $reservation) }}">
+    <form method="POST" action="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('reservasi.selesai', now()->addHours(3), ['reservation' => $reservation->id]) }}">
       @csrf
       <button type="submit" class="btn-primary" style="border:none;cursor:pointer;width:100%;padding:16px;font-size:16px;">
         Saya Sudah Bayar — Lanjut ke WhatsApp

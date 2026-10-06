@@ -15,7 +15,12 @@
     <tbody>
       @forelse($reservasis as $r)
         <tr>
-          <td>{{ $r['nama'] }}<br><span style="color:var(--text-gray);font-size:12px;">{{ $r['wa'] }}</span></td>
+          <td>{{ $r['nama'] }}
+            @if($r['akun'])
+              <span class="badge badge-active" title="Dipesan lewat akun terdaftar">Akun</span>
+            @else
+              <span class="badge" style="background:#EEF0F4;color:#5b6475;" title="Dipesan sebagai tamu, tanpa akun">Tamu</span>
+            @endif<br><span style="color:var(--text-gray);font-size:12px;">{{ $r['wa'] }}</span></td>
           <td>{{ $r['meja'] }}</td>
           <td>{{ $r['tanggal'] }}</td>
           <td>{{ $r['jam'] }}</td>

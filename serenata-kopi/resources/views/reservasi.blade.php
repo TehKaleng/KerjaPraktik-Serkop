@@ -12,6 +12,25 @@
       Pilih jadwal, meja, dan menu favoritmu. Setelah checkout, kamu akan diarahkan untuk konfirmasi ke WhatsApp kami.
     </p>
 
+    {{-- Pilihan akun: tamu boleh langsung memesan; akun mendapat riwayat, notifikasi, dan batas yang lebih longgar --}}
+    @guest
+      <div class="rsv-akun">
+        <div class="rsv-akun-teks">
+          <strong>Pesan sebagai tamu, atau pakai akun</strong>
+          <span>Tanpa akun pun bisa langsung memesan. Dengan akun, reservasimu tercatat di riwayat, mendapat notifikasi, dan batas pemesananmu lebih longgar.</span>
+        </div>
+        <div class="rsv-akun-aksi">
+          <a href="{{ route('reservasi.masuk') }}" class="btn-ghost">Masuk</a>
+          <a href="{{ route('reservasi.daftar') }}" class="btn-primary">Daftar</a>
+        </div>
+      </div>
+    @endguest
+    @auth
+      <div class="rsv-akun rsv-akun-masuk">
+        Memesan sebagai <strong>{{ auth()->user()->name }}</strong>. Reservasi ini tercatat di riwayat akunmu.
+      </div>
+    @endauth
+
     @if($errors->any())
       <div style="background:#5c2b22;color:#ffd8cf;padding:14px 18px;border-radius:8px;margin-bottom:20px;">
         @foreach($errors->all() as $error)
@@ -23,13 +42,18 @@
     <form method="POST" action="{{ route('reservasi.store') }}" id="form-reservasi">
       @csrf
 
+      {{-- Kolom jebakan bot (disembunyikan dari manusia; jangan dihapus) --}}
+      <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+        <label>Jangan diisi <input type="text" name="referensi_internal" tabindex="-1" autocomplete="off"></label>
+      </div>
+
       <!-- DATA DIRI -->
       <div class="rsv-card">
         <h3>1. Data Diri</h3>
         <div class="rsv-grid-2">
           <div>
             <label>Nama Lengkap</label>
-            <input type="text" name="nama" value="{{ old('nama', auth()->user()->name) }}" required>
+            <input type="text" name="nama" value="{{ old('nama', auth()->user()?->name) }}" required>
           </div>
           <div>
             <label>Nomor WhatsApp</label>
@@ -316,6 +340,19 @@
     .rsv-card .rsv-menu-cari input{font-size:16px;} /* mencegah iPhone memperbesar layar saat diketuk */
     .rsv-mtab{padding:7px 12px;font-size:13px;}
   }
+
+  /* Pilihan akun di atas form */
+  .rsv-akun{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px 24px;
+    background:var(--navy);border:1px solid rgba(245,241,234,0.14);border-radius:14px;
+    padding:16px 20px;margin-bottom:22px;
+  }
+  .rsv-akun-teks{display:flex;flex-direction:column;gap:3px;flex:1 1 320px;font-size:14px;line-height:1.5;color:var(--text-muted);}
+  .rsv-akun-teks strong, .rsv-akun-masuk strong{color:var(--text-light);}
+  .rsv-akun-teks strong{font-size:15px;}
+  .rsv-akun-aksi{display:flex;gap:10px;}
+  .rsv-akun-aksi a{padding:9px 22px;font-size:14px;}
+  .rsv-akun-masuk{display:block;font-size:14px;color:var(--text-muted);}
 </style>
 
 <script>

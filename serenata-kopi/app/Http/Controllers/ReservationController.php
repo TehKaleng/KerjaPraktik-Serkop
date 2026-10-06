@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Notifications\ReservasiBerhasil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class ReservationController extends Controller
 {
@@ -31,6 +32,24 @@ class ReservationController extends Controller
         $qrisAktif = self::QRIS_AKTIF;
 
         return view('reservasi', compact('menusByKategori', 'qrisAktif'));
+    }
+
+    /**
+     * Tombol "Masuk" / "Daftar" di halaman reservasi: simpan tujuan semula, supaya setelah
+     * login atau daftar pelanggan kembali ke form reservasi (bukan ke dashboard).
+     */
+    public function masuk()
+    {
+        session()->put('url.intended', route('reservasi.form'));
+
+        return redirect()->route('login');
+    }
+
+    public function daftar()
+    {
+        session()->put('url.intended', route('reservasi.form'));
+
+        return redirect()->route('register');
     }
 
     /**
@@ -61,9 +80,18 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
+        // Kolom jebakan untuk bot: manusia tidak melihatnya, bot biasanya mengisinya.
+        // Kalau terisi, permintaan dibuang diam-diam (tanpa memberi tahu bot).
+        if ($request->filled('referensi_internal')) {
+            return redirect()->route('home');
+        }
+
+        // Nomor WhatsApp dirapikan dulu (spasi, strip, +62 -> 08...) sebelum diperiksa
+        $request->merge(['whatsapp' => $this->normalisasiWhatsapp($request->input('whatsapp'))]);
+
         $validated = $request->validate([
             'nama'         => 'required|string|max:255',
-            'whatsapp'     => 'required|string|max:20',
+            'whatsapp'     => ['required', 'string', 'regex:/^08\d{8,12}$/'],
             'tanggal'      => 'required|date|after_or_equal:today',
             'jam'          => 'required',
             'jumlah_orang' => 'required|integer|min:1',
@@ -74,7 +102,29 @@ class ReservationController extends Controller
             'menu_id.*'    => 'exists:menus,id',
             'qty'          => 'required|array',
             'qty.*'        => 'integer|min:1',
+        ], [
+            'whatsapp.regex' => 'Nomor WhatsApp tidak valid. Gunakan nomor HP Indonesia, contoh: 08123456789.',
         ]);
+
+        // Batas reservasi yang masih menunggu konfirmasi kafe. Tamu dihitung per nomor WhatsApp,
+        // pemesan yang login dihitung per akun dan diberi batas lebih longgar.
+        $maksimal = auth()->check() ? 5 : 2;
+        $menunggu = Reservation::where('status', 'pending')
+            ->whereDate('tanggal', '>=', today())
+            ->when(
+                auth()->check(),
+                fn ($q) => $q->where('user_id', auth()->id()),
+                fn ($q) => $q->where('whatsapp', $validated['whatsapp'])
+            )
+            ->count();
+
+        if ($menunggu >= $maksimal) {
+            $subjek = auth()->check() ? 'Akunmu' : 'Nomor ini';
+
+            return back()
+                ->withErrors(['whatsapp' => "{$subjek} masih punya {$menunggu} reservasi yang belum dikonfirmasi kafe. Tunggu konfirmasi dulu, atau hubungi kami lewat WhatsApp."])
+                ->withInput();
+        }
 
         // Selama QRIS website nonaktif, semua reservasi otomatis "bayar di kasir" (disimpan sebagai 'cash').
         $metodeBayar = (self::QRIS_AKTIF && ($validated['metode_bayar'] ?? null) === 'qris') ? 'qris' : 'cash';
@@ -123,19 +173,26 @@ class ReservationController extends Controller
             return $reservation;
         });
 
-        auth()->user()->notify(new ReservasiBerhasil($reservation));
+        // Notifikasi di dashboard hanya ada untuk pemesan yang login. Pemesan tanpa akun
+        // mendapat konfirmasi lewat WhatsApp.
+        auth()->user()?->notify(new ReservasiBerhasil($reservation));
 
         if ($metodeBayar === 'qris') {
-            return redirect()->route('reservasi.konfirmasi', $reservation);
+            // Halaman konfirmasi dijaga tautan bertanda yang berlaku 3 jam
+            return redirect()->to(URL::temporarySignedRoute(
+                'reservasi.konfirmasi',
+                now()->addHours(3),
+                ['reservation' => $reservation->id]
+            ));
         }
 
         return $this->redirectWhatsapp($reservation);
     }
 
+    // Akses ke konfirmasi() dan selesai() dijaga middleware "signed" (tautan bertanda) di routes/web.php,
+    // bukan lewat akun, supaya pemesan tanpa login tetap bisa memakainya dan orang lain tidak bisa menebak.
     public function konfirmasi(Reservation $reservation)
     {
-        abort_unless($reservation->user_id === auth()->id(), 403);
-
         $kontak = ContactInfo::current();
 
         return view('reservasi-konfirmasi', compact('reservation', 'kontak'));
@@ -143,8 +200,6 @@ class ReservationController extends Controller
 
     public function selesai(Reservation $reservation)
     {
-        abort_unless($reservation->user_id === auth()->id(), 403);
-
         return $this->redirectWhatsapp($reservation);
     }
 
@@ -173,5 +228,17 @@ class ReservationController extends Controller
         $waUrl = "https://wa.me/{$nomorCafe}?text=" . urlencode($pesan);
 
         return redirect($waUrl);
+    }
+
+    /** Menyeragamkan nomor WhatsApp: hanya angka, dan awalan 62 diubah jadi 0 (62812... -> 0812...). */
+    private function normalisasiWhatsapp(?string $nomor): string
+    {
+        $digit = preg_replace('/\D+/', '', (string) $nomor);
+
+        if (str_starts_with($digit, '62')) {
+            $digit = '0' . substr($digit, 2);
+        }
+
+        return $digit;
     }
 }

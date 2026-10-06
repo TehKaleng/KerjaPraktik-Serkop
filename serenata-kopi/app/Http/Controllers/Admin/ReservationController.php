@@ -16,6 +16,7 @@ class ReservationController extends Controller
             ->map(fn ($r) => [
                 'id'           => $r->id,
                 'nama'         => $r->nama,
+                'akun'         => $r->user_id !== null, // true = dipesan lewat akun, false = tamu
                 'wa'           => $r->whatsapp,
                 'meja'         => $r->meja->kode ?? '-',
                 'tanggal'      => $r->tanggal->format('d M Y'),
@@ -44,14 +45,5 @@ class ReservationController extends Controller
         $reservasi->update(['status_bayar' => 'lunas']);
 
         return back()->with('success', 'Pembayaran dikonfirmasi lunas.');
-    }
-
-    public function destroy(Reservation $reservasi)
-    {
-        // reservation_items ikut kehapus otomatis (cascadeOnDelete di migration),
-        // meja jadi otomatis kosong lagi buat jam yang sama.
-        $reservasi->delete();
-
-        return back()->with('success', 'Reservasi berhasil dihapus.');
     }
 }

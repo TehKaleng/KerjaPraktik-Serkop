@@ -33,13 +33,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/reservasi', [ReservationController::class, 'create'])->name('reservasi.form');
-    Route::get('/reservasi/meja-tersedia', [ReservationController::class, 'mejaTersedia'])->name('reservasi.meja-tersedia');
-    Route::post('/reservasi', [ReservationController::class, 'store'])->name('reservasi.store');
-    Route::get('/reservasi/{reservation}/konfirmasi', [ReservationController::class, 'konfirmasi'])->name('reservasi.konfirmasi');
-    Route::post('/reservasi/{reservation}/selesai', [ReservationController::class, 'selesai'])->name('reservasi.selesai');
 });
+
+/*
+|--------------------------------------------------------------------------
+| RESERVASI (boleh sebagai tamu, boleh juga pakai akun)
+|--------------------------------------------------------------------------
+| Siapa pun bisa memesan tanpa akun. Pemesan yang login punya riwayat reservasi, notifikasi,
+| dan batas pemesanan yang lebih longgar daripada tamu.
+|
+| Pengaman:
+|  - throttle: "reservasi" = batas per jam (tamu lebih ketat, diatur di AppServiceProvider)
+|  - signed : halaman konfirmasi / selesai hanya bisa dibuka lewat tautan bertanda
+|              yang diberikan sistem, jadi nomor reservasi tidak bisa ditebak orang lain
+*/
+Route::get('/reservasi', [ReservationController::class, 'create'])->name('reservasi.form');
+Route::get('/reservasi/meja-tersedia', [ReservationController::class, 'mejaTersedia'])
+    ->middleware('throttle:120,1')
+    ->name('reservasi.meja-tersedia');
+Route::post('/reservasi', [ReservationController::class, 'store'])
+    ->middleware('throttle:reservasi')
+    ->name('reservasi.store');
+
+// Pintu masuk dari halaman reservasi: setelah login/daftar, pelanggan dikembalikan ke form reservasi
+Route::get('/reservasi/masuk', [ReservationController::class, 'masuk'])->name('reservasi.masuk');
+Route::get('/reservasi/daftar', [ReservationController::class, 'daftar'])->name('reservasi.daftar');
+Route::get('/reservasi/{reservation}/konfirmasi', [ReservationController::class, 'konfirmasi'])
+    ->middleware('signed')
+    ->name('reservasi.konfirmasi');
+Route::post('/reservasi/{reservation}/selesai', [ReservationController::class, 'selesai'])
+    ->middleware('signed')
+    ->name('reservasi.selesai');
 
 /*
 |--------------------------------------------------------------------------

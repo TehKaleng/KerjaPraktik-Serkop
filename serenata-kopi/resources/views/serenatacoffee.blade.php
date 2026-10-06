@@ -397,6 +397,42 @@
   @media (hover:none){
     .mc-search-clear{width:34px;height:34px;right:6px;font-size:20px;}  /* lebih mudah diketuk dengan jari */
   }
+
+  /* ===== Foto bagian Tentang: utuh (sampai lantai), tidak dipotong, ukuran mengikuti tinggi layar ===== */
+  .about-figure{
+    position:relative;padding:0;display:block;background:none;overflow:visible;
+    aspect-ratio:399 / 501;                       /* sama dengan bentuk foto asli (tegak) */
+  }
+  .about-figure img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;border-radius:16px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.35);
+  }
+  .about-figure span{                             /* chip menggantung di tepi bawah foto, tidak menutupi lantai */
+    position:absolute;left:16px;bottom:-14px;z-index:1;
+    padding:7px 16px;border-radius:999px;
+    background:rgba(232,86,42,0.95);color:#fff;font-size:15px;font-weight:600;
+    box-shadow:0 6px 16px rgba(0,0,0,0.25);
+  }
+
+  @media (min-width:821px){
+    #tentang{
+      /* Tinggi foto: selebar mungkin tapi tetap muat satu layar, maksimal 640px,
+         dan lebarnya tidak lebih dari separuh lebar isi (supaya teks di kanan tidak sempit) */
+      --foto-h:min(
+        clamp(360px, calc(var(--sec-h) - 2 * var(--sec-pad) - var(--tentang-naik)), 640px),
+        calc((min(1100px, 100vw) - 64px) * 0.5 / 0.7964)
+      );
+    }
+    .about-inner{grid-template-columns:auto 1fr;align-items:center;}
+    .about-figure{height:var(--foto-h);width:calc(var(--foto-h) * 0.7964);min-height:0;}
+  }
+  /* Layar pendek (laptop kecil): angkat-ke-atas dimatikan supaya fotonya bisa lebih besar */
+  @media (min-width:821px) and (max-height:720px){ #tentang{--tentang-naik:0px;} }
+
+  @media (max-width:820px){
+    .about-figure{width:min(100%,420px);height:auto;min-height:0;justify-self:center;margin-bottom:14px;}
+  }
 </style>
 </head>
 <body>
@@ -502,7 +538,10 @@
 
 <section id="tentang" class="about">
   <div class="wrap about-inner">
-    <div class="about-figure rv rv-left"><span>Sejak 2021</span></div>
+    <div class="about-figure rv rv-left">
+        <img src="{{ asset('images/tentang.jpg') }}" alt="Tampak depan Serenata Kopi &amp; Space" loading="lazy">
+        <span>Sejak 2021</span>
+      </div>
     <div>
       <div class="section-tag rv">TENTANG KAMI</div>
       <h2 class="rv" style="--d:.08s">Dibangun dari kecintaan pada kopi dan ruang berkumpul</h2>

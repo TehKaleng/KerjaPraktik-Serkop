@@ -4,11 +4,22 @@ namespace Database\Seeders;
 
 use App\Models\Menu;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class MenuAsliSeeder extends Seeder
 {
-
-    private const DAFTAR = [
+    /**
+     * Daftar menu asli Serenata Kopi & Space (dari buku menu di kafe).
+     * Format: [nama, kategori, harga dalam ribuan rupiah, deskripsi]  ->  27 berarti Rp 27.000
+     * Deskripsi null = belum diisi (diisi lewat panel admin atau ditambahkan di sini nanti).
+     *
+     * Aman dijalankan berulang: menu dicari berdasarkan nama. Kalau sudah ada,
+     * kategori dan harganya disamakan; foto tidak diubah, dan deskripsi hanya diisi kalau masih
+     * kosong (deskripsi yang kamu tulis sendiri di panel admin tidak akan tertimpa).
+     * Menu yang kamu tambah sendiri lewat panel admin tidak tersentuh.
+     */
+    public const DAFTAR = [
         // Kopi - Signature Coffee
         ['The Next Level V1 (Cookies)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa cookies.'],
         ['The Next Level V2 (Keju)', 'kopi', 27, 'Kopi signature Serenata dengan cita rasa keju.'],
@@ -73,6 +84,19 @@ class MenuAsliSeeder extends Seeder
         ['Mineral', 'tambahan', 8, 'Air mineral.'],
     ];
 
+    /**
+     * Foto menu yang disimpan di repo (folder database/seeders/foto/).
+     * Format: nama menu => nama file.
+     *
+     * Saat seeder dijalankan, file disalin ke penyimpanan (disk "public", folder menu/) dan dicatat
+     * di kolom foto, sama seperti kalau diunggah lewat panel admin. Foto dipasang ke menu yang SUDAH ADA
+     * (dicari berdasarkan nama, termasuk menu yang kamu tambah sendiri lewat admin) dan hanya kalau menu itu
+     * belum punya foto, jadi foto yang diunggah lewat admin tidak tertimpa.
+     */
+    private const FOTO = [
+        'The Next Level V1 (Cookies)' => 'the-next-level-v1.jpg',
+    ];
+
     public function run(): void
     {
         foreach (self::DAFTAR as [$nama, $kategori, $ribu, $deskripsi]) {
@@ -84,6 +108,35 @@ class MenuAsliSeeder extends Seeder
                 $menu->deskripsi = $deskripsi;
             }
 
+            $menu->save();
+        }
+
+        $this->pasangFoto();
+    }
+
+    /**
+     * Memasang foto dari folder database/seeders/foto/ ke menu yang sudah ada (berdasarkan nama).
+     * Menu yang tidak ditemukan atau sudah punya foto dilewati.
+     */
+    private function pasangFoto(): void
+    {
+        foreach (self::FOTO as $nama => $namaFile) {
+            $menu = Menu::where('nama', $nama)->first();
+
+            if ($menu === null || filled($menu->foto)) {
+                continue;
+            }
+
+            $sumber = database_path('seeders/foto/' . $namaFile);
+
+            if (! File::exists($sumber)) {
+                continue;
+            }
+
+            $tujuan = 'menu/' . $namaFile;
+            Storage::disk('public')->put($tujuan, File::get($sumber));
+
+            $menu->foto = $tujuan;
             $menu->save();
         }
     }

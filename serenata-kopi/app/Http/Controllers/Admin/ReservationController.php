@@ -46,4 +46,15 @@ class ReservationController extends Controller
 
         return back()->with('success', 'Pembayaran dikonfirmasi lunas.');
     }
+
+    public function destroy(Reservation $reservasi)
+    {
+        $nama = $reservasi->nama;
+
+        // reservation_items.reservation_id pakai cascadeOnDelete,
+        // jadi item menu milik reservasi ini ikut terhapus otomatis di database.
+        $reservasi->delete();
+
+        return back()->with('success', "Reservasi atas nama {$nama} berhasil dihapus.");
+    }
 }

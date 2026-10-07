@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -26,7 +27,8 @@ class Reservation extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal'              => 'date',
+        'pengingat_dikirim_at' => 'datetime',
     ];
 
     public function user()
@@ -42,5 +44,11 @@ class Reservation extends Model
     public function items()
     {
         return $this->hasMany(ReservationItem::class);
+    }
+
+    /** Tanggal + jam reservasi dalam satu objek waktu (zona waktu aplikasi, WIB). */
+    public function waktuMulai(): Carbon
+    {
+        return Carbon::parse($this->tanggal->format('Y-m-d') . ' ' . substr($this->jam, 0, 5));
     }
 }

@@ -17,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'admin'               => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'verified.jika.login' => \App\Http\Middleware\WajibVerifikasiJikaLogin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -42,3 +43,4 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->withErrors(['sesi' => $pesan]);
         });
     })->create();
+

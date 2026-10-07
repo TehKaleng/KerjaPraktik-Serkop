@@ -36,6 +36,11 @@ class DatabaseSeeder extends Seeder
         );
         $admin->assignRole($adminRole);
 
+        // Akun admin dibuat oleh sistem, jadi emailnya langsung dianggap terverifikasi
+        if (! $admin->hasVerifiedEmail()) {
+            $admin->markEmailAsVerified();
+        }
+
         if ($admin->wasRecentlyCreated && $passwordAcak && $this->command) {
             $this->command->warn("Akun admin dibuat: {$admin->email}");
             $this->command->warn("Password acak (catat sekarang): {$passwordAdmin}");
@@ -53,6 +58,10 @@ class DatabaseSeeder extends Seeder
                 ]
             );
             $user->assignRole($userRole);
+
+            if (! $user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
         }
 
         // 4. Isi data contoh: menu, testimoni, kontak
@@ -60,3 +69,4 @@ class DatabaseSeeder extends Seeder
         $this->call(MejaSeeder::class);
     }
 }
+

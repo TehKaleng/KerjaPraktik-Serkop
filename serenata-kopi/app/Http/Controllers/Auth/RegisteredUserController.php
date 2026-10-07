@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -42,11 +43,18 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // Event Registered otomatis mengirim email verifikasi (karena User implements MustVerifyEmail).
+        // Kalau SMTP gagal, akun tetap jadi; pelanggan bisa klik "Kirim Ulang" di halaman verifikasi.
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim email verifikasi saat pendaftaran: ' . $e->getMessage());
+        }
 
         Auth::login($user);
 
-        // Kalau mendaftar dari halaman reservasi, kembali ke sana; selain itu ke dashboard
+        // Kalau mendaftar dari halaman reservasi, kembali ke sana; selain itu ke dashboard.
+        // Keduanya akan meminta verifikasi email dulu sebelum bisa dipakai.
         return redirect()->intended(route('dashboard', absolute: false));
     }
 }

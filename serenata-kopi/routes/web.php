@@ -46,13 +46,18 @@ Route::middleware('auth')->group(function () {
 |  - throttle: "reservasi" = batas per jam (tamu lebih ketat, diatur di AppServiceProvider)
 |  - signed : halaman konfirmasi / selesai hanya bisa dibuka lewat tautan bertanda
 |              yang diberikan sistem, jadi nomor reservasi tidak bisa ditebak orang lain
+|  - verified.jika.login: akun yang emailnya belum diverifikasi diminta verifikasi dulu
 */
-Route::get('/reservasi', [ReservationController::class, 'create'])->name('reservasi.form');
+// Pelanggan yang login tapi belum verifikasi email diarahkan ke halaman verifikasi dulu.
+// Tamu (tidak login) tetap bisa memesan seperti biasa.
+Route::get('/reservasi', [ReservationController::class, 'create'])
+    ->middleware('verified.jika.login')
+    ->name('reservasi.form');
 Route::get('/reservasi/meja-tersedia', [ReservationController::class, 'mejaTersedia'])
     ->middleware('throttle:120,1')
     ->name('reservasi.meja-tersedia');
 Route::post('/reservasi', [ReservationController::class, 'store'])
-    ->middleware('throttle:reservasi')
+    ->middleware(['throttle:reservasi', 'verified.jika.login'])
     ->name('reservasi.store');
 
 // Pintu masuk dari halaman reservasi: setelah login/daftar, pelanggan dikembalikan ke form reservasi
@@ -104,3 +109,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 require __DIR__.'/auth.php';
+

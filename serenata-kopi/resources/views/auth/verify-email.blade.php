@@ -1,31 +1,40 @@
 <x-guest-layout>
+    <h2 style="font-size:20px;font-weight:700;color:var(--text-light);margin:0 0 8px;">Verifikasi Email</h2>
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+        Kami sudah mengirim tautan verifikasi ke
+        <strong style="color:var(--text-light);">{{ auth()->user()->email }}</strong>.
+        Buka email tersebut dan klik tombol <strong style="color:var(--text-light);">Verifikasi Email</strong>
+        untuk mengaktifkan akunmu. Cek juga folder Spam kalau belum terlihat.
     </div>
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+        <div class="mb-4 text-sm" style="color:#7ee08a;">
+            Tautan verifikasi baru sudah dikirim. Tautan lama otomatis tidak dipakai lagi.
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
+    @foreach ($errors->get('verifikasi') as $pesan)
+        <div class="mb-4 text-sm" style="color:#f0a0a0;">{{ $pesan }}</div>
+    @endforeach
+
+    <div class="flex items-center justify-between mt-4">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
+            <x-primary-button>
+                Kirim Ulang Email
+            </x-primary-button>
         </form>
 
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
+            <button type="submit" style="background:none;border:none;padding:0;color:var(--orange-light);font-size:13.5px;text-decoration:underline;cursor:pointer;font-family:inherit;">
+                Keluar
             </button>
         </form>
     </div>
+
+    <p class="mt-6 text-sm text-gray-600" style="margin-top:22px;">
+        Salah ketik email? Keluar, lalu daftar ulang dengan email yang benar.
+        Ingin memesan tanpa akun? Keluar, lalu buka halaman reservasi sebagai tamu.
+    </p>
 </x-guest-layout>

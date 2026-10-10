@@ -21,7 +21,18 @@
             @else
               <span class="badge" style="background:#EEF0F4;color:#5b6475;" title="Dipesan sebagai tamu, tanpa akun">Tamu</span>
             @endif<br><span style="color:var(--text-gray);font-size:12px;">{{ $r['wa'] }}</span></td>
-          <td>{{ $r['meja'] }}</td>
+          <td>
+            {{ $r['meja'] }}
+            @if($r['bentrok'])
+              <div style="margin-top:6px;font-size:12px;color:#C0442B;line-height:1.4;" title="Meja sudah dipakai reservasi terkonfirmasi">
+                ⚠ Sudah terkonfirmasi untuk {{ $r['bentrok'] }}
+              </div>
+            @elseif($r['antrean'] > 0)
+              <div style="margin-top:6px;font-size:12px;color:#B4720A;line-height:1.4;" title="Reservasi lain yang masih menunggu di meja dan jam yang sama">
+                {{ $r['antrean'] }} reservasi lain menunggu di meja &amp; jam ini
+              </div>
+            @endif
+          </td>
           <td>{{ $r['tanggal'] }}</td>
           <td>{{ $r['jam'] }}</td>
           <td style="max-width:220px;font-size:13px;">{{ $r['menu'] ?: '-' }}</td>
@@ -44,11 +55,16 @@
           </td>
           <td class="table-actions" style="flex-direction:column;gap:6px;align-items:stretch;">
             @if($r['status'] !== 'confirmed')
-              <form method="POST" action="{{ route('admin.reservasi.confirm', $r['id']) }}">
-                @csrf
-                @method('PUT')
-                <button type="submit" class="btn btn-outline btn-sm" style="width:100%;">Konfirmasi Hadir</button>
-              </form>
+              @if($r['bentrok'])
+                <button type="button" class="btn btn-outline btn-sm" style="width:100%;opacity:.5;cursor:not-allowed;" disabled title="Meja sudah dipakai reservasi terkonfirmasi">Meja Terpakai</button>
+              @else
+                <form method="POST" action="{{ route('admin.reservasi.confirm', $r['id']) }}" class="confirm-delete"
+                      data-message="Konfirmasi reservasi {{ $r['nama'] }} di meja {{ $r['meja'] }}, {{ $r['tanggal'] }} pukul {{ $r['jam'] }}?{{ $r['antrean'] > 0 ? ' Ada '.$r['antrean'].' reservasi lain yang menunggu di meja & jam ini; mereka tidak bisa dikonfirmasi lagi setelah ini.' : '' }}">
+                  @csrf
+                  @method('PUT')
+                  <button type="submit" class="btn btn-outline btn-sm" style="width:100%;">Konfirmasi</button>
+                </form>
+              @endif
             @endif
             @if($r['status_bayar'] !== 'lunas')
               <form method="POST" action="{{ route('admin.reservasi.confirm-bayar', $r['id']) }}" class="confirm-delete" data-message="Tandai pembayaran {{ $r['nama'] }} (Rp {{ number_format($r['total'], 0, ',', '.') }}) sebagai LUNAS? Pastikan uangnya sudah diterima di kasir.">
@@ -72,3 +88,4 @@
 </div>
 
 @endsection
+

@@ -99,7 +99,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/reservasi', [AdminReservationController::class, 'index'])->name('reservasi.index');
     Route::put('/reservasi/{reservasi}/confirm', [AdminReservationController::class, 'confirm'])->name('reservasi.confirm');
-    Route::put('/reservasi/{reservasi}/confirm-bayar', [AdminReservationController::class, 'confirmBayar'])->name('reservasi.confirm-bayar');
+    Route::get('/reservasi/{reservasi}/ubah', [AdminReservationController::class, 'edit'])->name('reservasi.edit');
+    Route::put('/reservasi/{reservasi}', [AdminReservationController::class, 'update'])->name('reservasi.update');
     Route::delete('/reservasi/{reservasi}', [AdminReservationController::class, 'destroy'])->name('reservasi.destroy');
 
     Route::get('/meja', [MejaController::class, 'index'])->name('meja.index');

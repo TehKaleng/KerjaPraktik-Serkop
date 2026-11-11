@@ -10,7 +10,7 @@
   {{-- Tab tanggal (pencarian & filter lain tetap terbawa saat pindah tab) --}}
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
     @foreach(\App\Http\Controllers\Admin\ReservationController::FILTER as $kunci => $teks)
-      <a href="{{ route('admin.reservasi.index', array_filter(['filter' => $kunci, 'q' => $cari, 'status' => $status, 'bayar' => $bayar, 'urut' => $urut !== 'jam' ? $urut : null])) }}"
+      <a href="{{ route('admin.reservasi.index', array_filter(['filter' => $kunci, 'q' => $cari, 'status' => $status, 'urut' => $urut !== 'jam' ? $urut : null])) }}"
          class="btn btn-sm {{ $filter === $kunci ? 'btn-orange' : 'btn-outline' }}">
         {{ $teks }}
         <span style="margin-left:6px;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:{{ $filter === $kunci ? 'rgba(255,255,255,.25)' : '#EEF0F4' }};">{{ $jumlah[$kunci] }}</span>
@@ -41,14 +41,6 @@
         <option value="">Semua</option>
         <option value="pending" @selected($status === 'pending')>Menunggu</option>
         <option value="confirmed" @selected($status === 'confirmed')>Terkonfirmasi</option>
-      </select>
-    </div>
-    <div>
-      <label for="bayar">Pembayaran</label>
-      <select id="bayar" name="bayar" style="{{ $inp }}">
-        <option value="">Semua</option>
-        <option value="belum" @selected($bayar === 'belum')>Belum lunas</option>
-        <option value="lunas" @selected($bayar === 'lunas')>Lunas</option>
       </select>
     </div>
     <div>
@@ -92,7 +84,7 @@
 </div>
 
 <style>
-  .rsv-filter{display:grid;grid-template-columns:2fr repeat(5, minmax(0,1fr)) auto;gap:12px;align-items:start;}
+  .rsv-filter{display:grid;grid-template-columns:2fr repeat(4, minmax(0,1fr)) auto;gap:12px;align-items:start;}
   .rsv-filter > div{margin:0;}
   .rsv-filter label{display:block;font-size:12.5px;font-weight:600;color:var(--text-gray);margin:0 0 5px;line-height:18px;height:18px;}
   /* Semua kolom isian & tombol disamakan tingginya supaya sejajar */
@@ -121,7 +113,7 @@
     <thead>
       <tr>
         <th>Nama</th><th>Meja</th><th>Jam</th><th>Menu</th>
-        <th>Total</th><th>Bayar</th><th>Status</th><th>Aksi</th>
+        <th>Total</th><th>Status</th><th>Aksi</th>
       </tr>
     </thead>
     <tbody>
@@ -149,15 +141,6 @@
           <td style="max-width:220px;font-size:13px;">{{ $r['menu'] ?: '-' }}</td>
           <td>Rp {{ number_format($r['total'], 0, ',', '.') }}</td>
           <td>
-            <span class="badge {{ $r['status_bayar'] === 'lunas' ? 'badge-active' : 'badge-pending' }}">
-              {{ $r['metode_bayar'] === 'qris' ? 'QRIS' : 'Kasir' }} ·
-              @if($r['status_bayar'] === 'lunas') Lunas
-              @elseif($r['status_bayar'] === 'menunggu_konfirmasi') Menunggu
-              @else Belum
-              @endif
-            </span>
-          </td>
-          <td>
             @if($r['status'] === 'confirmed')
               <span class="badge badge-active">Terkonfirmasi</span>
             @else
@@ -177,18 +160,16 @@
                 </form>
               @endif
             @endif
-            @if($r['status_bayar'] !== 'lunas')
-              <form method="POST" action="{{ route('admin.reservasi.confirm-bayar', $r['id']) }}" class="confirm-delete" data-message="Tandai pembayaran {{ $r['nama'] }} (Rp {{ number_format($r['total'], 0, ',', '.') }}) sebagai LUNAS? Pastikan uangnya sudah diterima di kasir.">
+            @if($r['status'] === 'confirmed')
+              {{-- Reservasi terkonfirmasi tidak dihapus, hanya diubah (mis. pindah jam / meja) --}}
+              <a href="{{ route('admin.reservasi.edit', ['reservasi' => $r['id'], 'kembali' => request()->fullUrl()]) }}" class="btn btn-outline btn-sm" style="width:100%;text-align:center;">Ubah</a>
+            @else
+              <form method="POST" action="{{ route('admin.reservasi.destroy', $r['id']) }}" class="confirm-delete" data-message="Yakin hapus reservasi {{ $r['nama'] }} ini? Tidak bisa dibatalkan.">
                 @csrf
-                @method('PUT')
-                <button type="submit" class="btn btn-orange btn-sm" style="width:100%;">{{ $r['status_bayar'] === 'menunggu_konfirmasi' ? 'Konfirmasi Bayar' : 'Tandai Lunas' }}</button>
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger-ghost btn-sm" style="width:100%;">Hapus</button>
               </form>
             @endif
-            <form method="POST" action="{{ route('admin.reservasi.destroy', $r['id']) }}" class="confirm-delete" data-message="Yakin hapus reservasi {{ $r['nama'] }} ini? Tidak bisa dibatalkan.">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="btn btn-danger-ghost btn-sm" style="width:100%;">Hapus</button>
-            </form>
           </td>
         </tr>
             @endforeach

@@ -51,12 +51,6 @@
               <span class="dash-badge status-{{ $r->status }}">
                 {{ $r->status === 'confirmed' ? 'Terkonfirmasi' : 'Menunggu' }}
               </span>
-              <span class="dash-badge bayar-{{ $r->status_bayar }}">
-                @if($r->status_bayar === 'lunas') Lunas
-                @elseif($r->status_bayar === 'menunggu_konfirmasi') Menunggu Verifikasi Bayar
-                @else Belum Bayar
-                @endif
-              </span>
             </div>
           </div>
 
@@ -69,7 +63,7 @@
           @endif
 
           <div class="dash-reservasi-foot">
-            <span>{{ $r->jumlah_orang }} orang · {{ $r->metode_bayar === 'qris' ? 'QRIS' : 'Bayar di Kasir' }}</span>
+            <span>{{ $r->jumlah_orang }} orang · Bayar di kasir saat datang</span>
             <strong>Total: Rp {{ number_format($r->total_harga, 0, ',', '.') }}</strong>
           </div>
         </div>
@@ -95,9 +89,6 @@
   .dash-badge{padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;}
   .status-pending{background:#4a3a1a;color:#f0c674;}
   .status-confirmed{background:#1e4a2a;color:#7ee08a;}
-  .bayar-belum_bayar{background:#4a2a2a;color:#f09a9a;}
-  .bayar-menunggu_konfirmasi{background:#4a3a1a;color:#f0c674;}
-  .bayar-lunas{background:#1e4a2a;color:#7ee08a;}
   .dash-item-list{list-style:none;padding:0;margin:0 0 12px;font-size:13.5px;color:var(--text-muted);}
   .dash-item-list li{padding:3px 0;}
   .dash-reservasi-foot{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:var(--text-muted);padding-top:10px;border-top:1px solid rgba(245,241,234,0.1);}

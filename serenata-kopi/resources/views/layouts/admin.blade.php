@@ -48,16 +48,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.1-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.4 2.1L8.1 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.4c.9.3 1.8.5 2.7.6a2 2 0 011.9 2.2z"/></svg>
         Info Kontak
       </a>
-      @if(Route::has('admin.kritik-saran.index'))
-      @php($kritikBaru = \App\Models\KritikSaran::where('status', 'baru')->count())
-      <a href="{{ route('admin.kritik-saran.index') }}" class="{{ request()->routeIs('admin.kritik-saran.*') ? 'active' : '' }}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>
-        Kritik &amp; Saran
-        @if($kritikBaru > 0)
-          <span style="margin-left:auto;background:#E8562A;color:#fff;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;">{{ $kritikBaru }}</span>
-        @endif
-      </a>
-      @endif
     </nav>
     <div class="sidebar-foot">
       <form method="POST" action="{{ route('logout') }}">

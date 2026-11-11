@@ -49,7 +49,7 @@
   </div>
   <table>
     <thead>
-      <tr><th>Foto</th><th>Nama</th><th>Kategori</th><th>Harga</th><th>Aksi</th></tr>
+      <tr><th>Foto</th><th>Nama</th><th>Deskripsi</th><th>Kategori</th><th>Harga</th><th>Aksi</th></tr>
     </thead>
     <tbody>
       @forelse(($menus ?? []) as $menu)
@@ -62,6 +62,13 @@
             @endif
           </td>
           <td>{{ $menu['nama'] }}</td>
+          <td class="menu-desc">
+            @if(filled($menu['deskripsi'] ?? null))
+              <span title="{{ $menu['deskripsi'] }}">{{ \Illuminate\Support\Str::limit($menu['deskripsi'], 90) }}</span>
+            @else
+              <span class="menu-desc-kosong">Belum ada deskripsi</span>
+            @endif
+          </td>
           <td>{{ $menu['kategori'] }}</td>
           <td>Rp {{ number_format($menu['harga'], 0, ',', '.') }}</td>
           <td class="table-actions">
@@ -74,10 +81,16 @@
           </td>
         </tr>
       @empty
-        <tr><td colspan="5" style="text-align:center;color:var(--text-gray);">Belum ada menu. Tambahkan menu pertama di atas.</td></tr>
+        <tr><td colspan="6" style="text-align:center;color:var(--text-gray);">Belum ada menu. Tambahkan menu pertama di atas.</td></tr>
       @endforelse
     </tbody>
   </table>
 </div>
+
+<style>
+  .menu-desc { max-width:340px; font-size:13px; line-height:1.5; color:var(--text-gray); }
+  .menu-desc-kosong { font-style:italic; opacity:.7; }
+  .table-actions { white-space:nowrap; }
+</style>
 
 @endsection

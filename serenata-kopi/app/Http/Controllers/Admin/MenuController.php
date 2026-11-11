@@ -17,6 +17,7 @@ class MenuController extends Controller
             'kategori'  => ucfirst($m->kategori),
             'harga'     => $m->harga,
             'foto'      => $m->foto,
+            'deskripsi' => $m->deskripsi,
         ]);
 
         return view('admin.menu.index', compact('menus'));

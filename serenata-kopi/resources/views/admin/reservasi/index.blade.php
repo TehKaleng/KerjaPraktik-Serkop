@@ -57,7 +57,7 @@
       <div class="rsv-f-aksi">
       <button type="submit" class="btn btn-orange btn-sm">Terapkan</button>
       @if($adaFilterLanjut)
-        <a href="{{ route('admin.reservasi.index') }}" class="btn btn-outline btn-sm">Reset</a>
+        <a href="{{ route('admin.reservasi.index') }}" class="btn btn-outline btn-sm">Hapus Filter</a>
       @endif
       </div>
     </div>
@@ -181,7 +181,7 @@
 <div class="panel" style="padding:40px;text-align:center;color:var(--text-gray);">
   @if($adaFilterLanjut)
     Tidak ada reservasi yang cocok dengan pencarian atau filter ini.
-    <a href="{{ route('admin.reservasi.index') }}" style="color:#E8562A;font-weight:600;">Reset filter</a>
+    <a href="{{ route('admin.reservasi.index') }}" style="color:#E8562A;font-weight:600;">Hapus filter</a>
   @elseif($filter === 'hari-ini')
     Belum ada reservasi untuk hari ini.
   @elseif($filter === 'mendatang')

@@ -19,10 +19,10 @@
       <img src="{{ asset('images/SerenataLogoHeader.png') }}" alt="Serenata">
     </div>
     <nav class="sidebar-nav">
-      {{-- Urutan menu: Dashboard, Reservasi, lalu pengelolaan data --}}
+      {{-- Urutan menu: Dasbor, Reservasi, lalu pengelolaan data --}}
       <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        Dashboard
+        Dasbor
       </a>
       <a href="{{ route('admin.reservasi.index') }}" class="{{ request()->routeIs('admin.reservasi.*') ? 'active' : '' }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
@@ -65,9 +65,9 @@
       <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu navigasi" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
-      <h1>@yield('title', 'Dashboard')</h1>
+      <h1>@yield('title', 'Dasbor')</h1>
 
-      {{-- Klik nama/avatar -> muncul menu: Edit Profil, Lihat Website, Keluar --}}
+      {{-- Klik nama/avatar -> muncul menu: Ubah Profil, Lihat Website, Keluar --}}
       <details class="user-menu" id="userMenu">
         <summary class="admin-user">
           <span>{{ auth()->user()->name ?? 'Admin Serenata' }}</span>
@@ -76,7 +76,7 @@
         <div class="user-menu-dropdown">
           <a href="{{ route('profile.edit') }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Edit Profil
+            Ubah Profil
           </a>
           <a href="{{ route('home') }}" target="_blank">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>

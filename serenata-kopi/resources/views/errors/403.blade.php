@@ -21,6 +21,6 @@
   @if($tautanTidakValid)
     <a href="{{ url('/reservasi') }}" class="btn btn-ghost">Buat Reservasi</a>
   @else
-    <a href="{{ url('/dashboard') }}" class="btn btn-ghost">Dashboard Saya</a>
+    <a href="{{ url('/dashboard') }}" class="btn btn-ghost">Dasbor Saya</a>
   @endif
 @endsection

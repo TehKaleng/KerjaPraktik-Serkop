@@ -103,6 +103,11 @@ tr:last-child td{border-bottom:none;}
 .badge-active{background:#E6F4EA;color:#1E7B3E;}
 .badge-pending{background:#FEF3E2;color:#B4720A;}
 .table-actions{display:flex;gap:8px;}
+/* Sel tabel tetap table-cell agar garis baris sejajar */
+td.table-actions{display:table-cell;white-space:nowrap;vertical-align:middle;}
+td.table-actions > *{display:inline-block;vertical-align:middle;margin:0 6px 0 0;}
+td.table-actions[style*="column"]{white-space:normal;}
+td.table-actions[style*="column"] > *{display:block;margin:0 0 6px 0;}
 
 /* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:22px;}

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Dashboard Saya')
+@section('title', 'Dasbor Saya')
 
 @section('content')
 <section style="padding:50px 0 100px;">
@@ -14,10 +14,10 @@
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <a href="{{ route('reservasi.form') }}" class="btn-primary">+ Reservasi Baru</a>
-        <a href="{{ route('profile.edit') }}" class="btn-ghost">Edit Profil</a>
+        <a href="{{ route('profile.edit') }}" class="btn-ghost">Ubah Profil</a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="btn-ghost" style="background:transparent;cursor:pointer;font-family:inherit;">Logout</button>
+          <button type="submit" class="btn-ghost" style="background:transparent;cursor:pointer;font-family:inherit;">Keluar</button>
         </form>
       </div>
     </div>

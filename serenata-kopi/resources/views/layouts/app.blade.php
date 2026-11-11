@@ -28,7 +28,7 @@
           @if(auth()->user()->hasRole('admin'))
             <a class="nav-dash-m" href="{{ route('admin.dashboard') }}">Panel Admin</a>
           @else
-            <a class="nav-dash-m" href="{{ route('dashboard') }}">Dashboard Saya</a>
+            <a class="nav-dash-m" href="{{ route('dashboard') }}">Dasbor Saya</a>
           @endif
         @else
           <a class="nav-dash-m" href="{{ route('login') }}">Masuk</a>
@@ -39,7 +39,7 @@
           @if(auth()->user()->hasRole('admin'))
             <a class="nav-dash" href="{{ route('admin.dashboard') }}">Panel Admin</a>
           @else
-            <a class="nav-dash" href="{{ route('dashboard') }}">Dashboard Saya</a>
+            <a class="nav-dash" href="{{ route('dashboard') }}">Dasbor Saya</a>
           @endif
         @else
           <a class="nav-dash" href="{{ route('login') }}">Masuk</a>

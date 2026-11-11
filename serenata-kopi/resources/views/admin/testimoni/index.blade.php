@@ -67,7 +67,7 @@
             @endif
           </td>
           <td class="table-actions">
-            <a href="{{ route('admin.testimoni.edit', $t['id']) }}" class="btn btn-outline btn-sm">Edit</a>
+            <a href="{{ route('admin.testimoni.edit', $t['id']) }}" class="btn btn-outline btn-sm">Ubah</a>
             <form method="POST" action="{{ route('admin.testimoni.destroy', $t['id']) }}" onsubmit="return confirm('Yakin hapus testimoni ini?')">
                 @csrf
                 @method('DELETE')

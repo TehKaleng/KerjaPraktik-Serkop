@@ -1,10 +1,10 @@
 @extends('layouts.admin')
-@section('title', 'Edit Testimoni')
+@section('title', 'Ubah Testimoni')
 
 @section('content')
 <div class="panel">
   <div class="panel-head">
-    <h2>Edit Testimoni: {{ $testimoni->nama }}</h2>
+    <h2>Ubah Testimoni: {{ $testimoni->nama }}</h2>
     <a href="{{ route('admin.testimoni.index') }}" class="btn btn-outline btn-sm">Kembali</a>
   </div>
   <form method="POST" action="{{ route('admin.testimoni.update', $testimoni) }}">

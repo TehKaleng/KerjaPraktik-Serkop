@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="panel">
-  <div class="panel-head"><h2>Edit Info Kontak</h2></div>
+  <div class="panel-head"><h2>Ubah Info Kontak</h2></div>
   <form method="POST" action="{{ route('admin.kontak.update') }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')

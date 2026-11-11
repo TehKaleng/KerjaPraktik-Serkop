@@ -1,10 +1,10 @@
 @extends('layouts.admin')
-@section('title', 'Edit Menu')
+@section('title', 'Ubah Menu')
 
 @section('content')
 <div class="panel">
   <div class="panel-head">
-    <h2>Edit Menu: {{ $menu->nama }}</h2>
+    <h2>Ubah Menu: {{ $menu->nama }}</h2>
     <a href="{{ route('admin.menu.index') }}" class="btn btn-outline btn-sm">Kembali</a>
   </div>
   <form method="POST" action="{{ route('admin.menu.update', $menu) }}" enctype="multipart/form-data">

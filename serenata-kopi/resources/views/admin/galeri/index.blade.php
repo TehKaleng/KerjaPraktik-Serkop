@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="panel" style="margin-bottom:24px;">
-  <div class="panel-head"><h2>Upload Foto Suasana</h2></div>
+  <div class="panel-head"><h2>Unggah Foto Suasana</h2></div>
   <form method="POST" action="{{ route('admin.galeri.store') }}" enctype="multipart/form-data">
     @csrf
     <div style="padding:22px;">
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="form-foot">
-      <button type="submit" class="btn btn-orange">Upload Foto</button>
+      <button type="submit" class="btn btn-orange">Unggah Foto</button>
     </div>
   </form>
 </div>

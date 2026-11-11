@@ -72,7 +72,7 @@
           <td>{{ $menu['kategori'] }}</td>
           <td>Rp {{ number_format($menu['harga'], 0, ',', '.') }}</td>
           <td class="table-actions">
-            <a href="{{ route('admin.menu.edit', $menu['id']) }}" class="btn btn-outline btn-sm">Edit</a>
+            <a href="{{ route('admin.menu.edit', $menu['id']) }}" class="btn btn-outline btn-sm">Ubah</a>
             <form method="POST" action="{{ route('admin.menu.destroy', $menu['id']) }}" class="confirm-delete" data-message="Yakin hapus menu {{ $menu['nama'] }}?">
               @csrf
               @method('DELETE')
